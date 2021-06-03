@@ -10,5 +10,21 @@ public class VendingMachine {
 
     // Stock the machine
 
+    public VendingMachine() {
+
+    }
+    
+    public void purchase(Slot slot) {
+
+    }
+
+    public void dispense(Product product) {
+
+    }
+
+    public void addMoney(BigDecimal amountToAdd) {
+        currentMoneyInMachine.add(amountToAdd);
+    }
+
 
 }
