@@ -6,19 +6,23 @@ import java.math.BigDecimal;
 import java.util.*;
 
 public class VendingMachine {
-    private final String OPTION1 = "Display Vending Machine Items";
-    private final String OPTION2 = "Purchase";
-    private final String OPTION3 = "Exit";
+    private final String OPTION1 = "(1) Display Vending Machine Items";
+    private final String OPTION2 = "(2) Purchase";
+    private final String OPTION3 = "(3) Exit";
     private BigDecimal currentMoneyInMachine;
-    private Set<Slot> listOfSlots = new HashSet<>();
+    private List<Slot> listOfSlots = new ArrayList<>();
     private List<String> menuOptions = new ArrayList<>();
 
     public VendingMachine() {
         menuOptions.add(OPTION1);
         menuOptions.add(OPTION2);
         menuOptions.add(OPTION3);
+        stock();
 
+    }
 
+    public List<Slot> getListOfSlots() {
+        return listOfSlots;
     }
 
     public List<String> getMenuOptions() {
