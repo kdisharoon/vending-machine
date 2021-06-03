@@ -4,10 +4,11 @@ public class Slot {
 
     private String slotName;        //A7, B3, etc.
     private Product product;        //product in this particular slot
-    private int quantity;           //quantity on hand
+    private int quantity = 5;           //quantity on hand
 
-    public Slot(String slotName) {
+    public Slot(String slotName, Product product) {
         this.slotName = slotName;
+        this.product = product;
     }
 
     public String getSlotName() {
