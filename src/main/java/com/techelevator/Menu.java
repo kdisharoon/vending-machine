@@ -6,7 +6,7 @@ public class Menu {
     // Instantiate a vending machine
     // Present a series of options
     // According to the
-    private List<String> intialOptions;
+    private List<String> initialOptions;
 
     public Menu() {
 
@@ -18,7 +18,7 @@ public class Menu {
 
     public static void main(String[] args) {
         VendingMachine vm = new VendingMachine();
-        Menu
+
     }
 
 
