@@ -9,26 +9,28 @@ public class VendingMachine {
     private final String OPTION1 = "(1) Display Vending Machine Items";
     private final String OPTION2 = "(2) Purchase";
     private final String OPTION3 = "(3) Exit";
-    private BigDecimal currentMoneyInMachine;
+    private final String[] initialMenuOptions = {OPTION1, OPTION2, OPTION3};
+    private final String[] purchaseFlowMenuOptions = {"(1) Feed Money", "(2) Select Product", "(3) Finish Transaction"};
+    private BigDecimal currentMoneyInMachine = BigDecimal.ZERO;
     private List<Slot> listOfSlots = new ArrayList<>();
-    private List<String> menuOptions = new ArrayList<>();
+    private List<String> menuOptions = new ArrayList<>(Arrays.asList(initialMenuOptions));
+    private List<String> purchaseFlowMenu = new ArrayList<>(Arrays.asList(purchaseFlowMenuOptions));
 
     public VendingMachine() {
-        menuOptions.add(OPTION1);
-        menuOptions.add(OPTION2);
-        menuOptions.add(OPTION3);
         stock();
-
     }
 
     public List<Slot> getListOfSlots() {
         return listOfSlots;
     }
 
-    public List<String> getMenuOptions() {
+    public List<String> getInitialMenuOptions() {
         return menuOptions;
     }
 
+    public List<String> getPurchaseFlowMenu() {
+        return purchaseFlowMenu;
+    }
 
     // Stock the machine
     public void stock() {
@@ -77,8 +79,10 @@ public class VendingMachine {
     }
 
     public void addMoney(BigDecimal amountToAdd) {
-        currentMoneyInMachine.add(amountToAdd);
+        currentMoneyInMachine = currentMoneyInMachine.add(amountToAdd);
     }
 
-
+    public BigDecimal getCurrentMoneyInMachine() {
+        return currentMoneyInMachine;
+    }
 }

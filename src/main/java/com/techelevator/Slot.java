@@ -33,6 +33,11 @@ public class Slot {
 
     @Override
     public String toString() {
+
+        if (quantity == 0) {
+            return "Slot " + slotName + ": SOLD OUT.";
+        }
+
         return "Slot " + slotName + ": " + product.getName() + ", $" + product.getPrice() + ", " + quantity + " in stock";
     }
 }
