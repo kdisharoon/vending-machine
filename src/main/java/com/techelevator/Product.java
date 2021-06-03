@@ -1,12 +1,14 @@
 package com.techelevator;
 
+import java.math.BigDecimal;
+
 public class Product {
 
     private String name;
-    private double price;
+    private BigDecimal price;
     private String saleMessage;
 
-    public Product(String productName, double productPrice) {
+    public Product(String productName, BigDecimal productPrice) {
         this.name = productName;
         this.price = productPrice;
         this.saleMessage = ", Yum!";
@@ -16,11 +18,11 @@ public class Product {
         return name;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
