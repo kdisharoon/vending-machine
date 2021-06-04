@@ -82,6 +82,10 @@ public class VendingMachine {
         currentMoneyInMachine = currentMoneyInMachine.add(amountToAdd);
     }
 
+    public void subtractMoney(BigDecimal amountToSubtract) {
+        currentMoneyInMachine = currentMoneyInMachine.subtract(amountToSubtract);
+    }
+
     public BigDecimal getCurrentMoneyInMachine() {
         return currentMoneyInMachine;
     }

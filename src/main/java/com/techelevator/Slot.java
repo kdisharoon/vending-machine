@@ -2,17 +2,17 @@ package com.techelevator;
 
 public class Slot {
 
-    private String slotName;        //A7, B3, etc.
+    private String slotID;        //A7, B3, etc.
     private Product product;        //product in this particular slot
     private int quantity = 5;           //quantity on hand
 
-    public Slot(String slotName, Product product) {
-        this.slotName = slotName;
+    public Slot(String slotID, Product product) {
+        this.slotID = slotID;
         this.product = product;
     }
 
-    public String getSlotName() {
-        return slotName;
+    public String getSlotID() {
+        return slotID;
     }
 
     public Product getProduct() {
@@ -31,13 +31,17 @@ public class Slot {
         this.quantity = quantity;
     }
 
+    public void sellItem() {
+        quantity -= 1;
+    }
+
     @Override
     public String toString() {
 
         if (quantity == 0) {
-            return "Slot " + slotName + ": SOLD OUT.";
+            return "Slot " + slotID + ": SOLD OUT.";
         }
 
-        return "Slot " + slotName + ": " + product.getName() + ", $" + product.getPrice() + ", " + quantity + " in stock";
+        return "Slot " + slotID + ": " + product.getName() + ", $" + product.getPrice() + ", " + quantity + " in stock";
     }
 }

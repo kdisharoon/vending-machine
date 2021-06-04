@@ -14,6 +14,9 @@ public class Menu <T> {
     List<String> purchaseMenu = vm.getPurchaseFlowMenu();
     List<Slot> inventory = vm.getListOfSlots();
     NumberFormat nf = NumberFormat.getCurrencyInstance();
+    List<BigDecimal> validAmounts = Arrays.asList(new BigDecimal("1.00"), new BigDecimal("2.00"), new BigDecimal("5.00"),
+            new BigDecimal("10.00"), new BigDecimal("20.00"), new BigDecimal("50.00"),
+            new BigDecimal("100.00"));
 
     public <T> String getUserChoice(List<T> relevantMenu) {
         String userChoice = "";
@@ -42,36 +45,91 @@ public class Menu <T> {
         System.out.println();
     }
 
+    public void feedMoney() {
+        BigDecimal amount;
+
+        System.out.println("Input amount of money");
+
+        try {
+            amount = keyboard.nextBigDecimal();
+        }
+        catch (InputMismatchException e) {
+            amount = BigDecimal.ZERO;
+        }
+
+        keyboard.nextLine();
+
+        if (validAmounts.contains(amount)) {
+            vm.addMoney(amount);
+        } else {
+            System.out.println("Invalid amount.");
+        }
+    }
+
+    public void dispense(Slot s) {
+        Product currentProduct = s.getProduct();
+        String itemName = currentProduct.getName();
+        BigDecimal itemPrice = currentProduct.getPrice();
+        vm.subtractMoney(itemPrice);
+        BigDecimal currentMoney = vm.getCurrentMoneyInMachine();
+        String itemSaleMessage = currentProduct.getSaleMessage();
+
+        s.sellItem();       //reduces quantity in this slot by 1
+
+        System.out.println(itemName + " costs " + itemPrice + ".\nYou have " + currentMoney
+                            + " remaining in the machine." + "\n" + itemSaleMessage);
+    }
+
+    public void selectProduct() {
+        System.out.println("Here are the currently available products: \n");
+        printMenu(inventory);
+        System.out.println("Please enter the slot of the product you'd like to purchase (i.e. A2, B4): ");
+        String userInput = keyboard.nextLine().toUpperCase();
+
+        boolean found = false;
+        for (Slot s : inventory) {
+            if (s.getSlotID().equals(userInput)) {
+                found = true;
+
+                if (s.getQuantity() > 0) {
+                    dispense(s);
+                }
+
+                else {
+                    System.out.println("Sorry, that product is sold out.");
+                }
+
+            }
+
+        }
+
+        if (!found) {
+            System.out.println("Sorry, that's not a valid slot.\n");
+        }
+
+    }
+
     public void processPurchaseChoice() {
-        List<BigDecimal> validAmounts = Arrays.asList(new BigDecimal[] {
-                new BigDecimal(1.00), new BigDecimal(2.00), new BigDecimal(5.00),
-                new BigDecimal(10.00), new BigDecimal(20.00), new BigDecimal(50.00),
-                new BigDecimal(100.00)});
+
         String purchaseChoice;
 
         do {
             printMenu(purchaseMenu);
             System.out.println("\nCurrent Money Provided: " + nf.format(vm.getCurrentMoneyInMachine()));
             purchaseChoice = getUserChoice(purchaseMenu);
-            BigDecimal amount;
 
-            System.out.println("Input amount of money");
-
-            amount = keyboard.nextBigDecimal();
-            keyboard.nextLine();
-
-            if (validAmounts.contains(amount)) {
-                vm.addMoney(amount);
-            } else {
-                System.out.println("Invalid amount.");
+            if (purchaseChoice.equals("1")) {
+                feedMoney();
             }
-        } while (purchaseChoice.equals("1"));
+            else if (purchaseChoice.equals("2")) {
+                selectProduct();
+            }
+            else {
+                //finish transaction, receive change in coins, update balance to 0, return to main menu
+            }
 
-        if (purchaseChoice.equals("2")) {
-            System.out.println("select product");
-        } else if (purchaseChoice.equals("3")) {
-            System.out.println("finish transaction");
-        }
+        } while ( (purchaseChoice.equals("1")) || (purchaseChoice.equals("2")) );
+
     }
 
     public void run() {
