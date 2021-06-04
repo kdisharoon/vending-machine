@@ -89,12 +89,17 @@ public class Menu <T> {
         boolean found = false;
         for (Slot s : inventory) {
             if (s.getSlotID().equals(userInput)) {
+                BigDecimal price = s.getProduct().getPrice();
+                BigDecimal currentMoney = vm.getCurrentMoneyInMachine();
                 found = true;
 
                 if (s.getQuantity() > 0) {
-                    dispense(s);
+                    if (price.compareTo(currentMoney) <= 0) {
+                        dispense(s);
+                    } else {
+                        System.out.println("You don't have enough money for that product.");
+                    }
                 }
-
                 else {
                     System.out.println("Sorry, that product is sold out.");
                 }
@@ -126,10 +131,31 @@ public class Menu <T> {
             }
             else {
                 //finish transaction, receive change in coins, update balance to 0, return to main menu
+                getChange();
+                vm.subtractMoney(vm.getCurrentMoneyInMachine());
             }
 
         } while ( (purchaseChoice.equals("1")) || (purchaseChoice.equals("2")) );
 
+    }
+
+    public void getChange() {
+        BigDecimal balance = vm.getCurrentMoneyInMachine();
+        BigDecimal quarter = new BigDecimal("0.25");
+        BigDecimal dime = new BigDecimal("0.10");
+        BigDecimal nickel = new BigDecimal("0.05");
+        int numberOfQuarters;
+        int numberOfDimes;
+        int numberOfNickels;
+
+        numberOfQuarters = balance.divide(quarter).intValue();
+        balance = balance.remainder(quarter);
+        numberOfDimes = balance.divide(dime).intValue();
+        balance = balance.remainder(dime);
+        numberOfNickels = balance.divide(nickel).intValue();
+
+        System.out.println("Your change is " + numberOfQuarters + " quarters, "
+                            + numberOfDimes + " dimes, " + numberOfNickels + " nickels");
     }
 
     public void run() {
