@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Arrays;
@@ -135,9 +137,10 @@ public class Menu <T> {
         String purchaseChoice = "";
         String logFileName = "Log.txt";
 
-        do {
-            try (FileWriter fw = new FileWriter(new File(logFileName), true);
-                 PrintWriter auditLogWriter = new PrintWriter(fw, true)) {
+        try (FileWriter fw = new FileWriter(logFileName, true);
+             PrintWriter auditLogWriter = new PrintWriter(fw, true)) {
+
+            do {
                 System.out.println("\nWhat would you like to do?");
                 printMenu(purchaseMenu);
                 System.out.println("Current Money Provided: " + nf.format(vm.getCurrentMoneyInMachine()));
@@ -161,12 +164,11 @@ public class Menu <T> {
 
     //            auditLogWriter.flush();
 
-            } catch (IOException e) {
-                System.out.println("Unable to find or create " + logFileName + ".");
-            }
+            } while ((purchaseChoice.equals("1")) || (purchaseChoice.equals("2")));
 
-
-        } while ((purchaseChoice.equals("1")) || (purchaseChoice.equals("2")));
+        } catch (IOException e) {
+            System.out.println("Unable to find or create " + logFileName + ".");
+        }
 
     }
 
@@ -200,24 +202,10 @@ public class Menu <T> {
 
     public String getCurrentDateAndTime() {
         LocalDateTime now = LocalDateTime.now();
-        int month = now.getMonthValue();
-        int day = now.getDayOfMonth();
-        int year = now.getYear();
-        int hour = now.getHour();
-        int minute = now.getMinute();
-        int second = now.getSecond();
-        String morningOrNight = "PM";
 
-        if (hour < 12) {
-            morningOrNight = "AM";
-        }
+        return now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)) + " " +
+                now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM));
 
-        if (hour > 12) {
-            hour -= 12;
-        }
-
-        return month + "/" + day + "/" + year + " " + hour
-                + ":" + minute + ":" + second + " " + morningOrNight;
     }
 
     public void run() {
