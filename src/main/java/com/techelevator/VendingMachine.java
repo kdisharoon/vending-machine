@@ -1,7 +1,6 @@
 package com.techelevator;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
@@ -22,10 +21,44 @@ public class VendingMachine {
     private final List<BigDecimal> validAmounts = Arrays.asList(new BigDecimal("1.00"), new BigDecimal("2.00"), new BigDecimal("5.00"),
             new BigDecimal("10.00"), new BigDecimal("20.00"), new BigDecimal("50.00"),
             new BigDecimal("100.00"));
+    private final Map<String, Integer> totalSales = new HashMap<>();
 
 
     public VendingMachine() {
         stock();
+        getTotalSalesLog();
+    }
+
+    public void initializeSalesFile(File salesFile) {
+        try (FileWriter fw = new FileWriter(salesFile);
+             PrintWriter pw = new PrintWriter(fw)) {
+
+            salesFile.createNewFile();
+
+            for (Slot slot : listOfSlots) {
+                pw.println(slot.getProduct().getName() + "|" + 0);
+            }
+        } catch (IOException e) {
+            System.out.println("Error: could not create that file.");
+        }
+    }
+
+    public void getTotalSalesLog() {
+        File salesFile = new File("totalsales.txt");
+
+        if (!salesFile.exists()) {
+            initializeSalesFile(salesFile);
+        }
+
+        try (Scanner salesFileStream = new Scanner(salesFile)) {
+            while (salesFileStream.hasNext()) {
+                String[] line = salesFileStream.nextLine().split("\\|");
+
+                totalSales.put(line[0], Integer.parseInt(line[1]));
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: could not find that file.");
+        }
     }
 
     public List<Slot> getListOfSlots() {
@@ -43,6 +76,12 @@ public class VendingMachine {
     // Stock the machine
     public void stock() {
         String filename = "vendingmachine.csv";
+
+
+        // if saleslog exists
+        // populate map
+        // else
+        // create sales log
 
         try (Scanner stockFile = new Scanner(new File(filename))) {
 
@@ -70,7 +109,12 @@ public class VendingMachine {
                         toAdd = new Drink(itemName, price);
                 }
 
-                listOfSlots.add(new Slot(slotName, toAdd));
+                Slot newSlotItem = new Slot(slotName, toAdd);
+                listOfSlots.add(newSlotItem);
+
+                if (!totalSales.containsKey(newSlotItem.getProduct().getName())) {
+                    totalSales.put(newSlotItem.getProduct().getName(), 0);
+                }
             }
         } catch (FileNotFoundException e) {
             System.out.println("Oh no, we can't find that file.");
