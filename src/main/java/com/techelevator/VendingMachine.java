@@ -76,6 +76,7 @@ public class VendingMachine {
             for (String item: totalSales.keySet()) {
                 pw.println(item + "|" + totalSales.get(item));
             }
+            pw.println("\n**TOTAL SALES**\n  " + currentMoneyInMachine);
         } catch (IOException e) {
             System.out.println("Error: Unable to write to that file.");
         }
