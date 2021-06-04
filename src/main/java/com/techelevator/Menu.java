@@ -1,17 +1,16 @@
 package com.techelevator;
 
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Arrays;
 import java.util.InputMismatchException;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.IOException;
 
 public class Menu <T> {
     VendingMachine vm = new VendingMachine();
@@ -38,11 +37,7 @@ public class Menu <T> {
         return userChoice;
     }
 
-    public void displayInitialMenu() {
-        System.out.println("Welcome to the Vendo-Matic 800 from Umbrella Corp!");
-        System.out.println("Would you like to:");
-        printMenu(initialMenu);
-    }
+
 
     public <T> void printMenu(List<T> listToPrint) {
         for (T t : listToPrint) {
@@ -55,7 +50,7 @@ public class Menu <T> {
         BigDecimal amount;
         String message = "FEED MONEY:";
 
-        System.out.println("Input amount of money");
+        System.out.println("Input amount of money:");
 
         try {
             amount = keyboard.nextBigDecimal();
@@ -69,7 +64,7 @@ public class Menu <T> {
 
         if (validAmounts.contains(roundedAmount)) {
             vm.addMoney(roundedAmount);
-            System.out.println(nf.format(roundedAmount) + " added to your balance.");
+            System.out.println(nf.format(roundedAmount) + " added to your balance.\n\n");
             return message + " " + nf.format(amount) + " " + nf.format(vm.getCurrentMoneyInMachine());
         } else {
             System.out.println("Invalid amount.");
@@ -88,8 +83,8 @@ public class Menu <T> {
 
         s.sellItem();       //reduces quantity in this slot by 1
 
-        System.out.println(itemName + " costs " + itemPrice + ".\nYou have " + currentMoney
-                            + " remaining in the machine." + "\n" + itemSaleMessage);
+        System.out.println(itemName + " costs " + nf.format(itemPrice) + ".\nYou have " + nf.format(currentMoney)
+                            + " remaining in the machine." + "\n" + itemSaleMessage + "\n\n");
     }
 
     public String selectProduct() {
@@ -136,26 +131,27 @@ public class Menu <T> {
      */
     public void processPurchaseChoice() {
 
-        String purchaseChoice;
+        String purchaseChoice = "";
         String logFileName = "Log.txt";
 
-        try (FileWriter fw = new FileWriter(new File(logFileName), true);
-             PrintWriter auditLogWriter = new PrintWriter(fw)) {
+        try (FileWriter fw = new FileWriter(logFileName, true);
+             PrintWriter auditLogWriter = new PrintWriter(fw, true)) {
 
             do {
+                System.out.println("\nWhat would you like to do?");
                 printMenu(purchaseMenu);
-                System.out.println("\nCurrent Money Provided: " + nf.format(vm.getCurrentMoneyInMachine()));
+                System.out.println("Current Money Provided: " + nf.format(vm.getCurrentMoneyInMachine()));
                 purchaseChoice = getUserChoice(purchaseMenu);
                 String msgForLog;
 
                 if (purchaseChoice.equals("1")) {
-
                     msgForLog = feedMoney();
                 } else if (purchaseChoice.equals("2")) {
                     msgForLog = selectProduct();
                 } else {
                     msgForLog = getChange();
                 }
+
                 String currentDateTime = getCurrentDateAndTime();
 
                 if (msgForLog != null) {
@@ -163,10 +159,14 @@ public class Menu <T> {
                     auditLogWriter.println(msgForLog);
                 }
 
+    //            auditLogWriter.flush();
+
             } while ((purchaseChoice.equals("1")) || (purchaseChoice.equals("2")));
+
         } catch (IOException e) {
             System.out.println("Unable to find or create " + logFileName + ".");
         }
+
     }
 
     public String getChange() {
@@ -199,31 +199,20 @@ public class Menu <T> {
 
     public String getCurrentDateAndTime() {
         LocalDateTime now = LocalDateTime.now();
-        int month = now.getMonthValue();
-        int day = now.getDayOfMonth();
-        int year = now.getYear();
-        int hour = now.getHour();
-        int minute = now.getMinute();
-        int second = now.getSecond();
-        String morningOrNight = "PM";
 
-        if (hour < 12) {
-            morningOrNight = "AM";
-        }
+        return now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)) + " " +
+                now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM));
 
-        if (hour > 12) {
-            hour -= 12;
-        }
-
-        return month + "/" + day + "/" + year + " " + hour
-                + ":" + minute + ":" + second + " " + morningOrNight;
     }
 
     public void run() {
         String userChoice;
 
+        System.out.println("Welcome to the Vendo-Matic 800 from Umbrella Corp!");
+
         do {
-            displayInitialMenu();
+            System.out.println("\nWhat would you like to do?");
+            printMenu(initialMenu);
             userChoice = getUserChoice(vm.getInitialMenuOptions());
 
             if (userChoice.equals("1")) {
