@@ -14,9 +14,6 @@ import java.io.PrintWriter;
 import java.io.IOException;
 
 public class Menu <T> {
-    // Instantiate a vending machine
-    // Present a series of options
-    // According to the
     VendingMachine vm = new VendingMachine();
     Scanner keyboard = new Scanner(System.in);
     List<String> initialMenu = vm.getInitialMenuOptions();
