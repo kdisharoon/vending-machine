@@ -147,7 +147,7 @@ public class Menu {
         } while (!userChoice.equals("3"));
 
         // Write to/overwrite sales file with map of Product|total sold
-        // vm.writeToSalesFile()
+         VM.writeToSalesFile();
     }
 
     public static void main(String[] args) {

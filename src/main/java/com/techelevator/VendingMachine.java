@@ -22,11 +22,12 @@ public class VendingMachine {
             new BigDecimal("10.00"), new BigDecimal("20.00"), new BigDecimal("50.00"),
             new BigDecimal("100.00"));
     private final Map<String, Integer> totalSales = new HashMap<>();
+    private final String SALES_REPORT = "salesreport.txt";
 
 
     public VendingMachine() {
         stock();
-        getTotalSalesLog();
+        populateTotalSalesFromLog();
     }
 
     public void initializeSalesFile(File salesFile) {
@@ -43,8 +44,8 @@ public class VendingMachine {
         }
     }
 
-    public void getTotalSalesLog() {
-        File salesFile = new File("totalsales.txt");
+    public void populateTotalSalesFromLog() {
+        File salesFile = new File(SALES_REPORT);
 
         if (!salesFile.exists()) {
             initializeSalesFile(salesFile);
@@ -53,11 +54,30 @@ public class VendingMachine {
         try (Scanner salesFileStream = new Scanner(salesFile)) {
             while (salesFileStream.hasNext()) {
                 String[] line = salesFileStream.nextLine().split("\\|");
+                if (line[1].equals("null")) line[1] = "0";
 
                 totalSales.put(line[0], Integer.parseInt(line[1]));
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error: could not find that file.");
+        }
+
+        for (Slot slot : listOfSlots) {
+            String newProductName = slot.getProduct().getName();
+            if (!totalSales.containsKey(newProductName)) {
+                totalSales.put(newProductName, 0);
+            }
+        }
+    }
+
+    public void writeToSalesFile() {
+        try (FileWriter fw = new FileWriter(SALES_REPORT);
+             PrintWriter pw = new PrintWriter(fw)) {
+            for (String item: totalSales.keySet()) {
+                pw.println(item + "|" + totalSales.get(item));
+            }
+        } catch (IOException e) {
+            System.out.println("Error: Unable to write to that file.");
         }
     }
 
@@ -165,6 +185,7 @@ public class VendingMachine {
         String itemSaleMessage = currentProduct.getSaleMessage();
 
         s.sellItem();       //reduces quantity in this slot by 1
+        totalSales.put(itemName, totalSales.get(itemName) + 1);
 
         return itemName + " costs " + nf.format(itemPrice) + ".\nYou have " + nf.format(currentMoney)
                 + " remaining in the machine." + "\n" + itemSaleMessage + "\n\n";
