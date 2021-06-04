@@ -3,7 +3,15 @@ package com.techelevator;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Arrays;
+import java.util.InputMismatchException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
 
 public class Menu <T> {
     // Instantiate a vending machine
@@ -46,8 +54,9 @@ public class Menu <T> {
         System.out.println();
     }
 
-    public void feedMoney() {
+    public String feedMoney() {
         BigDecimal amount;
+        String message = "FEED MONEY:";
 
         System.out.println("Input amount of money");
 
@@ -64,9 +73,12 @@ public class Menu <T> {
         if (validAmounts.contains(roundedAmount)) {
             vm.addMoney(roundedAmount);
             System.out.println(nf.format(roundedAmount) + " added to your balance.");
+            return message + " " + nf.format(amount) + " " + nf.format(vm.getCurrentMoneyInMachine());
         } else {
             System.out.println("Invalid amount.");
+            return null;
         }
+
     }
 
     public void dispense(Slot s) {
@@ -83,11 +95,12 @@ public class Menu <T> {
                             + " remaining in the machine." + "\n" + itemSaleMessage);
     }
 
-    public void selectProduct() {
+    public String selectProduct() {
         System.out.println("Here are the currently available products: \n");
         printMenu(inventory);
         System.out.println("Please enter the slot of the product you'd like to purchase (i.e. A2, B4): ");
         String userInput = keyboard.nextLine().toUpperCase();
+        String message = null;
 
         boolean found = false;
         for (Slot s : inventory) {
@@ -98,7 +111,10 @@ public class Menu <T> {
 
                 if (s.getQuantity() > 0) {
                     if (price.compareTo(currentMoney) <= 0) {
+                        BigDecimal balanceBeforePurchase = vm.getCurrentMoneyInMachine();
                         dispense(s);
+                        message = s.getProduct().getName() + " " + s.getSlotID() + " "
+                                + nf.format(balanceBeforePurchase) + " " + nf.format(vm.getCurrentMoneyInMachine());
                     } else {
                         System.out.println("You don't have enough money for that product.");
                     }
@@ -115,40 +131,59 @@ public class Menu <T> {
             System.out.println("Sorry, that's not a valid slot.\n");
         }
 
+        return message;
     }
 
+    /**
+     *
+     */
     public void processPurchaseChoice() {
 
         String purchaseChoice;
+        String logFileName = "Log.txt";
 
-        do {
-            printMenu(purchaseMenu);
-            System.out.println("\nCurrent Money Provided: " + nf.format(vm.getCurrentMoneyInMachine()));
-            purchaseChoice = getUserChoice(purchaseMenu);
+        try (FileWriter fw = new FileWriter(new File(logFileName), true);
+             PrintWriter auditLogWriter = new PrintWriter(fw)) {
 
-            if (purchaseChoice.equals("1")) {
-                feedMoney();
-            }
-            else if (purchaseChoice.equals("2")) {
-                selectProduct();
-            }
-            else {
-                //finish transaction, receive change in coins, update balance to 0, return to main menu
-                getChange();
-            }
+            do {
+                printMenu(purchaseMenu);
+                System.out.println("\nCurrent Money Provided: " + nf.format(vm.getCurrentMoneyInMachine()));
+                purchaseChoice = getUserChoice(purchaseMenu);
+                String msgForLog;
 
-        } while ( (purchaseChoice.equals("1")) || (purchaseChoice.equals("2")) );
+                if (purchaseChoice.equals("1")) {
 
+                    msgForLog = feedMoney();
+                } else if (purchaseChoice.equals("2")) {
+                    msgForLog = selectProduct();
+                } else {
+                    msgForLog = getChange();
+                }
+                String currentDateTime = getCurrentDateAndTime();
+
+                if (msgForLog != null) {
+                    msgForLog = currentDateTime + " " + msgForLog;
+                    auditLogWriter.println(msgForLog);
+                }
+
+            } while ((purchaseChoice.equals("1")) || (purchaseChoice.equals("2")));
+        } catch (IOException e) {
+            System.out.println("Unable to find or create " + logFileName + ".");
+        }
     }
 
-    public void getChange() {
-        BigDecimal balance = vm.getCurrentMoneyInMachine();
+    public String getChange() {
+        BigDecimal initialBalance = vm.getCurrentMoneyInMachine();
+
+        if (initialBalance.equals(BigDecimal.ZERO)) return null;
+
         BigDecimal quarter = new BigDecimal("0.25");
         BigDecimal dime = new BigDecimal("0.10");
         BigDecimal nickel = new BigDecimal("0.05");
         int numberOfQuarters;
         int numberOfDimes;
         int numberOfNickels;
+        String message = "GIVE CHANGE:";
 
         numberOfQuarters = vm.getCurrentMoneyInMachine().divide(quarter).intValue();
         vm.subtractMoney(quarter.multiply(new BigDecimal(numberOfQuarters)));
@@ -161,6 +196,30 @@ public class Menu <T> {
 
         System.out.println("Your change is " + numberOfQuarters + " quarters, "
                             + numberOfDimes + " dimes, " + numberOfNickels + " nickels");
+
+        return message + " " + nf.format(initialBalance) + " " + nf.format(vm.getCurrentMoneyInMachine());
+    }
+
+    public String getCurrentDateAndTime() {
+        LocalDateTime now = LocalDateTime.now();
+        int month = now.getMonthValue();
+        int day = now.getDayOfMonth();
+        int year = now.getYear();
+        int hour = now.getHour();
+        int minute = now.getMinute();
+        int second = now.getSecond();
+        String morningOrNight = "PM";
+
+        if (hour < 12) {
+            morningOrNight = "AM";
+        }
+
+        if (hour > 12) {
+            hour -= 12;
+        }
+
+        return month + "/" + day + "/" + year + " " + hour
+                + ":" + minute + ":" + second + " " + morningOrNight;
     }
 
     public void run() {
@@ -184,6 +243,7 @@ public class Menu <T> {
 
         Menu vendingMachineMenu = new Menu();
         vendingMachineMenu.run();
+
     }
 
 
