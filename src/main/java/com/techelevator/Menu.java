@@ -1,6 +1,7 @@
 package com.techelevator;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -58,9 +59,11 @@ public class Menu <T> {
         }
 
         keyboard.nextLine();
+        BigDecimal roundedAmount = amount.setScale(2, RoundingMode.FLOOR);
 
-        if (validAmounts.contains(amount)) {
-            vm.addMoney(amount);
+        if (validAmounts.contains(roundedAmount)) {
+            vm.addMoney(roundedAmount);
+            System.out.println(nf.format(roundedAmount) + " added to your balance.");
         } else {
             System.out.println("Invalid amount.");
         }
@@ -132,7 +135,6 @@ public class Menu <T> {
             else {
                 //finish transaction, receive change in coins, update balance to 0, return to main menu
                 getChange();
-                vm.subtractMoney(vm.getCurrentMoneyInMachine());
             }
 
         } while ( (purchaseChoice.equals("1")) || (purchaseChoice.equals("2")) );
@@ -148,11 +150,14 @@ public class Menu <T> {
         int numberOfDimes;
         int numberOfNickels;
 
-        numberOfQuarters = balance.divide(quarter).intValue();
-        balance = balance.remainder(quarter);
-        numberOfDimes = balance.divide(dime).intValue();
-        balance = balance.remainder(dime);
-        numberOfNickels = balance.divide(nickel).intValue();
+        numberOfQuarters = vm.getCurrentMoneyInMachine().divide(quarter).intValue();
+        vm.subtractMoney(quarter.multiply(new BigDecimal(numberOfQuarters)));
+
+        numberOfDimes = vm.getCurrentMoneyInMachine().divide(dime).intValue();
+        vm.subtractMoney(dime.multiply(new BigDecimal(numberOfDimes)));
+
+        numberOfNickels = vm.getCurrentMoneyInMachine().divide(nickel).intValue();
+        vm.subtractMoney(nickel.multiply(new BigDecimal(numberOfNickels)));
 
         System.out.println("Your change is " + numberOfQuarters + " quarters, "
                             + numberOfDimes + " dimes, " + numberOfNickels + " nickels");
