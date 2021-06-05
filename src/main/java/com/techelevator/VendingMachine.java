@@ -10,10 +10,8 @@ import java.time.format.FormatStyle;
 import java.util.*;
 
 public class VendingMachine {
-    private final String OPTION1 = "(1) Display Vending Machine Items";
-    private final String OPTION2 = "(2) Purchase";
-    private final String OPTION3 = "(3) Exit";
-    private final String[] initialMenuOptions = {OPTION1, OPTION2, OPTION3};
+    private final Scanner keyboard = new Scanner(System.in);
+    private final String[] initialMenuOptions = {"(1) Display Vending Machine Items", "(2) Purchase", "(3) Exit"};
     private final String[] purchaseMenuOptions = {"(1) Feed Money", "(2) Select Product", "(3) Finish Transaction"};
     private BigDecimal currentMoneyInMachine = BigDecimal.ZERO;
     private BigDecimal totalSalesThisInstance = BigDecimal.ZERO;
@@ -21,13 +19,11 @@ public class VendingMachine {
     private final List<String> INITIAL_MENU = new ArrayList<>(Arrays.asList(initialMenuOptions));
     private final List<String> purchaseMenu = new ArrayList<>(Arrays.asList(purchaseMenuOptions));
     private final NumberFormat nf = NumberFormat.getCurrencyInstance();
-    private final Scanner keyboard = new Scanner(System.in);
     private final List<BigDecimal> validAmounts = Arrays.asList(new BigDecimal("1.00"), new BigDecimal("2.00"), new BigDecimal("5.00"),
             new BigDecimal("10.00"), new BigDecimal("20.00"), new BigDecimal("50.00"),
             new BigDecimal("100.00"));
     private final Map<String, Integer> totalSales = new HashMap<>();
     private final String SALES_REPORT = "salesreport.txt";
-
 
     public VendingMachine() {
         stock();
@@ -119,12 +115,6 @@ public class VendingMachine {
     // Stock the machine
     public void stock() {
         String filename = "vendingmachine.csv";
-
-
-        // if saleslog exists
-        // populate map
-        // else
-        // create sales log
 
         try (Scanner stockFile = new Scanner(new File(filename))) {
 
