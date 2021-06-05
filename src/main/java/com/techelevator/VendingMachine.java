@@ -14,7 +14,7 @@ public class VendingMachine {
     private final String[] initialMenuOptions = {"(1) Display Vending Machine Items", "(2) Purchase", "(3) Exit"};
     private final String[] purchaseMenuOptions = {"(1) Feed Money", "(2) Select Product", "(3) Finish Transaction"};
     private BigDecimal currentMoneyInMachine = BigDecimal.ZERO;
-    private BigDecimal totalSalesThisInstance = BigDecimal.ZERO;
+    private BigDecimal totalAllTimeSales = BigDecimal.ZERO;
     private final List<Slot> listOfSlots = new ArrayList<>();
     private final List<String> INITIAL_MENU = new ArrayList<>(Arrays.asList(initialMenuOptions));
     private final List<String> purchaseMenu = new ArrayList<>(Arrays.asList(purchaseMenuOptions));
@@ -56,10 +56,14 @@ public class VendingMachine {
                 String line = salesFileStream.nextLine();
                 if (line.contains("|")) {
                     String[] keyAndVal = salesFileStream.nextLine().split("\\|");
-                    if (keyAndVal[1].equals("null")) keyAndVal[1] = "0";
+//                    if (keyAndVal[1].equals("null")) keyAndVal[1] = "0";
 
                     totalSales.put(keyAndVal[0], Integer.parseInt(keyAndVal[1]));
+                } else if (line.contains("$")) {
+                    String[] totalCumulativeSales = line.split("\\$");
+                    this.totalAllTimeSales = new BigDecimal(totalCumulativeSales[1]);
                 }
+
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error: could not find that file.");
@@ -92,8 +96,8 @@ public class VendingMachine {
                 todaysReportPW.println(item + "|" + totalSales.get(item));
             }
 
-            cumulativeSalesPW.println("\n**TOTAL SALES**\n  " + totalSalesThisInstance);
-            todaysReportPW.println("\n**TOTAL SALES**\n  " + totalSalesThisInstance);
+            cumulativeSalesPW.println("\n**TOTAL SALES**\n  " + nf.format(totalAllTimeSales));
+            todaysReportPW.println("\n**TOTAL SALES**\n  " + nf.format(totalAllTimeSales));
         } catch (IOException e) {
             System.out.println(e);
             System.out.println("Error: Unable to write to that file.");
@@ -199,7 +203,7 @@ public class VendingMachine {
 
         s.sellItem();       //reduces quantity in this slot by 1
         totalSales.put(itemName, totalSales.get(itemName) + 1);
-        totalSalesThisInstance = totalSalesThisInstance.add(currentProduct.getPrice());
+        totalAllTimeSales = totalAllTimeSales.add(currentProduct.getPrice());
 
         return itemName + " costs " + nf.format(itemPrice) + ".\nYou have " + nf.format(currentMoney)
                 + " remaining in the machine." + "\n" + itemSaleMessage + "\n\n";
