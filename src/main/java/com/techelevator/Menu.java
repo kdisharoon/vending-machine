@@ -22,7 +22,8 @@ public class Menu {
 
         userChoice = keyboard.nextLine();
 
-        while (! (userChoice.equals("1") || userChoice.equals("2") || userChoice.equals("3")) ) {
+        while (! (userChoice.equals("1") || userChoice.equals("2")
+                || userChoice.equals("3") || userChoice.equals("4")) ) {
             System.out.println("That's not valid input, try again.");
             printMenu(relevantMenu);
             userChoice = keyboard.nextLine();
@@ -142,12 +143,11 @@ public class Menu {
                 printMenu(inventory);
             } else if (userChoice.equals("2")) {
                 processPurchaseChoice();
+            } else if (userChoice.equals("4")) {
+                System.out.println("Generating Sales Report...");
+                VM.writeToSalesFile();
             }
-
         } while (!userChoice.equals("3"));
-
-        // Write to/overwrite sales file with map of Product|total sold
-         VM.writeToSalesFile();
     }
 
     public static void main(String[] args) {

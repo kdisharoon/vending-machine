@@ -4,6 +4,9 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 public class VendingMachine {
@@ -13,6 +16,7 @@ public class VendingMachine {
     private final String[] initialMenuOptions = {OPTION1, OPTION2, OPTION3};
     private final String[] purchaseMenuOptions = {"(1) Feed Money", "(2) Select Product", "(3) Finish Transaction"};
     private BigDecimal currentMoneyInMachine = BigDecimal.ZERO;
+    private BigDecimal totalSalesThisInstance = BigDecimal.ZERO;
     private final List<Slot> listOfSlots = new ArrayList<>();
     private final List<String> INITIAL_MENU = new ArrayList<>(Arrays.asList(initialMenuOptions));
     private final List<String> purchaseMenu = new ArrayList<>(Arrays.asList(purchaseMenuOptions));
@@ -53,10 +57,13 @@ public class VendingMachine {
 
         try (Scanner salesFileStream = new Scanner(salesFile)) {
             while (salesFileStream.hasNext()) {
-                String[] line = salesFileStream.nextLine().split("\\|");
-                if (line[1].equals("null")) line[1] = "0";
+                String line = salesFileStream.nextLine();
+                if (line.contains("\\|")) {
+                    String[] keyAndVal = salesFileStream.nextLine().split("\\|");
+                    if (keyAndVal[1].equals("null")) keyAndVal[1] = "0";
 
-                totalSales.put(line[0], Integer.parseInt(line[1]));
+                    totalSales.put(keyAndVal[0], Integer.parseInt(keyAndVal[1]));
+                }
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error: could not find that file.");
@@ -71,13 +78,28 @@ public class VendingMachine {
     }
 
     public void writeToSalesFile() {
-        try (FileWriter fw = new FileWriter(SALES_REPORT);
-             PrintWriter pw = new PrintWriter(fw)) {
+        String ext = ".txt";
+        String fileBase = "totalsales ";
+        LocalDateTime now = LocalDateTime.now();
+        String fileDateAndTime = now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)) + " " +
+                now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM));
+        fileDateAndTime = fileDateAndTime.replace("/", "-");
+        String todayFile = fileBase + fileDateAndTime + ext;
+
+        try (FileWriter cumulativeSalesFW = new FileWriter(SALES_REPORT);
+             PrintWriter cumulativeSalesPW = new PrintWriter(cumulativeSalesFW);
+             FileWriter todaysReportFW = new FileWriter(todayFile);
+             PrintWriter todaysReportPW = new PrintWriter(todaysReportFW)) {
+
             for (String item: totalSales.keySet()) {
-                pw.println(item + "|" + totalSales.get(item));
+                cumulativeSalesPW.println(item + "|" + totalSales.get(item));
+                todaysReportPW.println(item + "|" + totalSales.get(item));
             }
-            pw.println("\n**TOTAL SALES**\n  " + currentMoneyInMachine);
+
+            cumulativeSalesPW.println("\n**TOTAL SALES**\n  " + totalSalesThisInstance);
+            todaysReportPW.println("\n**TOTAL SALES**\n  " + totalSalesThisInstance);
         } catch (IOException e) {
+            System.out.println(e);
             System.out.println("Error: Unable to write to that file.");
         }
     }
@@ -187,6 +209,7 @@ public class VendingMachine {
 
         s.sellItem();       //reduces quantity in this slot by 1
         totalSales.put(itemName, totalSales.get(itemName) + 1);
+        totalSalesThisInstance = totalSalesThisInstance.add(currentProduct.getPrice());
 
         return itemName + " costs " + nf.format(itemPrice) + ".\nYou have " + nf.format(currentMoney)
                 + " remaining in the machine." + "\n" + itemSaleMessage + "\n\n";
