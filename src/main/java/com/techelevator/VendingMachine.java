@@ -37,7 +37,7 @@ public class VendingMachine {
             salesFile.createNewFile();
 
             for (Slot slot : listOfSlots) {
-                pw.println(slot.getProduct().getName() + "|" + 0);
+                pw.println(slot.getProduct().getName() + "|0");
             }
         } catch (IOException e) {
             System.out.println("Error: could not create that file.");
@@ -54,7 +54,7 @@ public class VendingMachine {
         try (Scanner salesFileStream = new Scanner(salesFile)) {
             while (salesFileStream.hasNext()) {
                 String line = salesFileStream.nextLine();
-                if (line.contains("\\|")) {
+                if (line.contains("|")) {
                     String[] keyAndVal = salesFileStream.nextLine().split("\\|");
                     if (keyAndVal[1].equals("null")) keyAndVal[1] = "0";
 

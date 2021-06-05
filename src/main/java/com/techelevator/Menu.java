@@ -103,8 +103,11 @@ public class Menu {
                     msgForLog = VM.feedMoney();
                 } else if (purchaseChoice.equals("2")) {
                     msgForLog = selectProduct();
-                } else {
+                } else if (purchaseChoice.equals("3")) {
                     msgForLog = VM.getChange();
+                } else {
+                    System.out.println("Invalid choice.");
+                    continue;
                 }
 
                 String currentDateTime = getCurrentDateAndTime();
