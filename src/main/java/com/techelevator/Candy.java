@@ -2,8 +2,9 @@ package com.techelevator;
 
 import java.math.BigDecimal;
 
-public class Candy extends Product{
-    private String candySlogan = "Munch Munch";
+public class Candy extends Product {
+
+    private final String CANDY_SLOGAN = "Munch Munch";
 
     public Candy(String name, BigDecimal price) {
         super(name, price);
@@ -11,6 +12,6 @@ public class Candy extends Product{
 
     @Override
     public String getSaleMessage() {
-        return this.candySlogan + super.getSaleMessage();
+        return this.CANDY_SLOGAN + super.getSaleMessage();
     }
 }

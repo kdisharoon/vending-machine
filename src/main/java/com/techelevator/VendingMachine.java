@@ -8,17 +8,17 @@ import java.text.NumberFormat;
 import java.util.*;
 
 public class VendingMachine {
-    private final String[] initialMenuOptions = {"(1) Display Vending Machine Items", "(2) Purchase", "(3) Exit"};
-    private final String[] purchaseMenuOptions = {"(1) Feed Money", "(2) Select Product", "(3) Finish Transaction"};
+    private final String[] INITIAL_MENU_OPTIONS = {"(1) Display Vending Machine Items", "(2) Purchase", "(3) Exit"};
+    private final String[] PURCHASE_MENU_OPTIONS = {"(1) Feed Money", "(2) Select Product", "(3) Finish Transaction"};
     private BigDecimal currentMoneyInMachine = BigDecimal.ZERO;
     private BigDecimal totalCurrentSales = BigDecimal.ZERO;
     private final List<Slot> listOfSlots = new ArrayList<>();
-    private final List<String> INITIAL_MENU = new ArrayList<>(Arrays.asList(initialMenuOptions));
-    private final List<String> purchaseMenu = new ArrayList<>(Arrays.asList(purchaseMenuOptions));
+    private final List<String> INITIAL_MENU = new ArrayList<>(Arrays.asList(INITIAL_MENU_OPTIONS));
+    private final List<String> PURCHASE_MENU = new ArrayList<>(Arrays.asList(PURCHASE_MENU_OPTIONS));
     private final NumberFormat nf = NumberFormat.getCurrencyInstance();
     private final Scanner keyboard = new Scanner(System.in);
-    private final List<BigDecimal> validAmounts = Arrays.asList(new BigDecimal("1.00"), new BigDecimal("2.00"), new BigDecimal("5.00"),
-            new BigDecimal("10.00"), new BigDecimal("20.00"), new BigDecimal("50.00"),
+    private final List<BigDecimal> VALID_MONEY_AMOUNTS = Arrays.asList(new BigDecimal("1.00"), new BigDecimal("2.00"),
+            new BigDecimal("5.00"), new BigDecimal("10.00"), new BigDecimal("20.00"), new BigDecimal("50.00"),
             new BigDecimal("100.00"));
     private final Map<String, Integer> salesTracker = new HashMap<>();
 
@@ -42,7 +42,7 @@ public class VendingMachine {
     }
 
     public List<String> getPurchaseMenu() {
-        return purchaseMenu;
+        return PURCHASE_MENU;
     }
 
     public Map<String, Integer> getSalesTracker() {
@@ -115,7 +115,7 @@ public class VendingMachine {
         keyboard.nextLine();
         BigDecimal roundedAmount = amount.setScale(2, RoundingMode.FLOOR);
 
-        if (validAmounts.contains(roundedAmount)) {
+        if (VALID_MONEY_AMOUNTS.contains(roundedAmount)) {
             addMoney(roundedAmount);
             System.out.println(nf.format(roundedAmount) + " added to your balance.\n\n");
             return message + " " + nf.format(amount) + " " + nf.format(getCurrentMoneyInMachine());

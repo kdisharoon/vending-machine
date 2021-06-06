@@ -1,17 +1,17 @@
 package com.techelevator;
 
-import java.io.*;
+import java.io.*;                                    //can be removed
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
+import java.time.LocalDateTime;                     //can be removed
+import java.time.format.DateTimeFormatter;          //can be removed
+import java.time.format.FormatStyle;                //can be removed
 import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
     private final VendingMachine VM = new VendingMachine();
-    private final Scanner keyboard = new Scanner(System.in);
+    private Scanner keyboard = new Scanner(System.in);
     private final List<String> initialMenu = VM.getInitialMenu();
     private final List<String> purchaseMenu = VM.getPurchaseMenu();
     private final List<Slot> inventory = VM.getListOfSlots();

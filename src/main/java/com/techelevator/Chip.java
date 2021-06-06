@@ -4,15 +4,14 @@ import java.math.BigDecimal;
 
 public class Chip extends Product {
 
-    private String chipSlogan = "Crunch Crunch";
+    private final String CHIP_SLOGAN = "Crunch Crunch";
 
-    public Chip(String productName, BigDecimal productPrice) {
-        super(productName, productPrice);
-
+    public Chip(String name, BigDecimal price) {
+        super(name, price);
     }
 
     @Override
     public String getSaleMessage() {
-        return this.chipSlogan + super.getSaleMessage();
+        return this.CHIP_SLOGAN + super.getSaleMessage();
     }
 }

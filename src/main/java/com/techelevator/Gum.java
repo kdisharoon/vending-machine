@@ -3,7 +3,8 @@ package com.techelevator;
 import java.math.BigDecimal;
 
 public class Gum extends Product {
-    private String gumSlogan = "Chew Chew";
+
+    private final String GUM_SLOGAN = "Chew Chew";
 
     public Gum(String name, BigDecimal price) {
         super(name, price);
@@ -11,6 +12,6 @@ public class Gum extends Product {
 
     @Override
     public String getSaleMessage() {
-        return gumSlogan + super.getSaleMessage();
+        return this.GUM_SLOGAN + super.getSaleMessage();
     }
 }
