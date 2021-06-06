@@ -22,8 +22,7 @@ public class Menu {
 
         userChoice = keyboard.nextLine();
 
-        while (! (userChoice.equals("1") || userChoice.equals("2")
-                || userChoice.equals("3") || userChoice.equals("4")) ) {
+        while (! (userChoice.equals("1") || userChoice.equals("2") || userChoice.equals("3")) ) {
             System.out.println("That's not valid input, try again.");
             printMenu(relevantMenu);
             userChoice = keyboard.nextLine();
@@ -103,11 +102,8 @@ public class Menu {
                     msgForLog = VM.feedMoney();
                 } else if (purchaseChoice.equals("2")) {
                     msgForLog = selectProduct();
-                } else if (purchaseChoice.equals("3")) {
-                    msgForLog = VM.getChange();
                 } else {
-                    System.out.println("Invalid choice.");
-                    continue;
+                    msgForLog = VM.getChange();
                 }
 
                 String currentDateTime = getCurrentDateAndTime();
@@ -146,16 +142,16 @@ public class Menu {
                 printMenu(inventory);
             } else if (userChoice.equals("2")) {
                 processPurchaseChoice();
-            } else if (userChoice.equals("4")) {
-                System.out.println("Generating Sales Report...");
-                VM.writeToSalesFile();
             }
+
         } while (!userChoice.equals("3"));
+
     }
 
     public static void main(String[] args) {
 
         Menu vendingMachineMenu = new Menu();
         vendingMachineMenu.run();
+
     }
 }
