@@ -27,6 +27,6 @@ public class Product {
     }
 
     public String getSaleMessage() {
-        return saleMessage;
+        return this.saleMessage;
     }
 }
