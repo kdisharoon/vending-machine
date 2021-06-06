@@ -33,8 +33,8 @@ public class Menu {
         do {
             if (invalidChoice) {
                 System.out.println("That's not valid input, try again.");
+                printMenu(relevantMenu);
             }
-            printMenu(relevantMenu);
             userChoice = keyboard.nextLine();
             invalidChoice = true;
         }
@@ -149,7 +149,7 @@ public class Menu {
                     processPurchaseChoice();
                 } else if (userChoice.equals("4")) {
                     System.out.println("Generating Sales Report...");
-                    documenter.generateSalesReport(VM.getSalesTracker(), VM.getTotalCurrentSales());
+                    documenter.generateSalesReport(VM.getAndFlushSalesTracker(true), VM.getTotalCurrentSales());
                 }
             }
         } while (!userChoice.equals("3"));

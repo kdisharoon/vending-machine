@@ -45,8 +45,20 @@ public class VendingMachine {
         return PURCHASE_MENU;
     }
 
-    public Map<String, Integer> getSalesTracker() {
-        return salesTracker;
+    public Map<String, Integer> getAndFlushSalesTracker(boolean flush) {
+        Map<String, Integer> salesTallyToReturn = new HashMap<>();
+
+        for (Map.Entry<String, Integer> entry: salesTracker.entrySet()) {
+            salesTallyToReturn.put(entry.getKey(), entry.getValue());
+        }
+
+        if (flush) {
+            for (Map.Entry<String, Integer> entry : salesTracker.entrySet()) {
+                salesTracker.put(entry.getKey(), 0);
+            }
+        }
+
+        return salesTallyToReturn;
     }
 
     // Stock the machine as soon as a VendingMachine object is instantiated
