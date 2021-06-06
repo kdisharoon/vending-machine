@@ -1,5 +1,7 @@
 package com.techelevator;
 
+import java.util.Objects;
+
 public class Slot {
 
     private final String SLOT_ID;          //A7, B3, etc.
@@ -52,4 +54,5 @@ public class Slot {
         //if the product is not sold out, return the slot ID, product name, product price and quantity in stock
         return "Slot " + SLOT_ID + ": " + product.getName() + ", $" + product.getPrice() + ", " + quantity + " in stock";
     }
+
 }
