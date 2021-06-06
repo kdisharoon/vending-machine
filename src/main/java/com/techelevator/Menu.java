@@ -25,6 +25,8 @@ public class Menu {
      * @return A string corresponding to the numerical choice (between 1 and 4) entered by the user.git com
      */
     public <T> String getUserChoice(List<T> relevantMenu) {
+        if (relevantMenu == null) return null;
+
         String userChoice;
 
         userChoice = keyboard.nextLine();
@@ -102,19 +104,20 @@ public class Menu {
             purchaseChoice = getUserChoice(purchaseMenu);
             String logMessage;
 
-            if (purchaseChoice.equals("1")) {
-                logMessage = VM.feedMoney();
-            } else if (purchaseChoice.equals("2")) {
-                logMessage = selectProduct();
-            } else if (purchaseChoice.equals("3")) {
-                logMessage = VM.getChange();
-            } else {
-                System.out.println("Invalid choice.");
-                continue;
+            if (purchaseChoice != null) {
+                if (purchaseChoice.equals("1")) {
+                    logMessage = VM.feedMoney();
+                } else if (purchaseChoice.equals("2")) {
+                    logMessage = selectProduct();
+                } else if (purchaseChoice.equals("3")) {
+                    logMessage = VM.getChange();
+                } else {
+                    System.out.println("Invalid choice.");
+                    continue;
+                }
+
+                documenter.writeLog(logMessage);
             }
-
-            documenter.writeLog(logMessage);
-
         } while ((purchaseChoice.equals("1")) || (purchaseChoice.equals("2")));
     }
 
@@ -128,13 +131,15 @@ public class Menu {
             printMenu(initialMenu);
             userChoice = getUserChoice(VM.getInitialMenu());
 
-            if (userChoice.equals("1")) {
-                printMenu(inventory);
-            } else if (userChoice.equals("2")) {
-                processPurchaseChoice();
-            } else if (userChoice.equals("4")) {
-                System.out.println("Generating Sales Report...");
-                documenter.generateSalesReport(VM.getSalesTracker(), VM.getTotalCurrentSales());
+            if (userChoice != null) {
+                if (userChoice.equals("1")) {
+                    printMenu(inventory);
+                } else if (userChoice.equals("2")) {
+                    processPurchaseChoice();
+                } else if (userChoice.equals("4")) {
+                    System.out.println("Generating Sales Report...");
+                    documenter.generateSalesReport(VM.getSalesTracker(), VM.getTotalCurrentSales());
+                }
             }
         } while (!userChoice.equals("3"));
     }

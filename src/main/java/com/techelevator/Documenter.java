@@ -14,6 +14,11 @@ public class Documenter {
     private final NumberFormat nf = NumberFormat.getCurrencyInstance();
     private BigDecimal totalAllTimeSales = BigDecimal.ZERO;
 
+    /**
+     * Writes provided contents to log file.
+     *
+     * @param logMessage - Message to write to Log.txt. Provided by Menu.java.
+     */
     public void writeLog(String logMessage) {
         String logFileName = "Log.txt";
 
@@ -31,6 +36,13 @@ public class Documenter {
         }
     }
 
+    /**
+     * Method publicly available to accept Map of current sales and total amount of current sales
+     * as a BigDecimal.
+     *
+     * @param currentSales A map with item names as keys and number sold since instantiation.
+     * @param totalCurrentSales Total amount of sales since instantiation.
+     */
     public void generateSalesReport(Map<String, Integer> currentSales, BigDecimal totalCurrentSales) {
         Map<String, Integer> cumulativeSales = getCumulativeSales();
 
@@ -45,10 +57,15 @@ public class Documenter {
             }
         }
 
-        writeToSalesFile(currentSales, totalCurrentSales);
+        this.totalAllTimeSales = this.totalAllTimeSales.add(totalCurrentSales);
+        writeToSalesFile(currentSales);
     }
 
-    public Map<String, Integer> getCumulativeSales() {
+    /**
+     * Looks for the most recent file with prefix "totalsales"
+     * @return
+     */
+    private Map<String, Integer> getCumulativeSales() {
         File salesFile = getMostRecentSalesFile();
         Map<String, Integer> cumulativeSales = new HashMap<>();
 
@@ -76,7 +93,7 @@ public class Documenter {
         return null;
     }
 
-    public File getMostRecentSalesFile() {
+    private File getMostRecentSalesFile() {
         File currentDirectory = new File(".");
         File[] files = currentDirectory.listFiles();
         File mostRecent = null;
@@ -98,12 +115,11 @@ public class Documenter {
         return mostRecent;
     }
 
-    public void writeToSalesFile(Map<String, Integer> salesToWrite, BigDecimal totalCurrentSales) {
+    private void writeToSalesFile(Map<String, Integer> salesToWrite) {
         String fileBase = "totalsales ";
         String ext = ".txt";
         String fileDateAndTime = getCurrentDateAndTime().replace("/", "-");
         String todayFile = fileBase + fileDateAndTime + ext;
-        this.totalAllTimeSales = this.totalAllTimeSales.add(totalCurrentSales);
 
         try (FileWriter todaysReportFW = new FileWriter(todayFile);
              PrintWriter todaysReportPW = new PrintWriter(todaysReportFW)) {
@@ -119,7 +135,7 @@ public class Documenter {
         }
     }
 
-    public String getCurrentDateAndTime() {
+    private String getCurrentDateAndTime() {
         LocalDateTime now = LocalDateTime.now();
 
         return now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)) + " " +
