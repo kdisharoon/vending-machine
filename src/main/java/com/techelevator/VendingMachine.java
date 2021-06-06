@@ -14,7 +14,7 @@ public class VendingMachine {
     private final String[] initialMenuOptions = {"(1) Display Vending Machine Items", "(2) Purchase", "(3) Exit"};
     private final String[] purchaseMenuOptions = {"(1) Feed Money", "(2) Select Product", "(3) Finish Transaction"};
     private BigDecimal currentMoneyInMachine = BigDecimal.ZERO;
-    private BigDecimal totalAllTimeSales = BigDecimal.ZERO;
+    private BigDecimal totalCurrentSales = BigDecimal.ZERO;
     private final List<Slot> listOfSlots = new ArrayList<>();
     private final List<String> INITIAL_MENU = new ArrayList<>(Arrays.asList(initialMenuOptions));
     private final List<String> purchaseMenu = new ArrayList<>(Arrays.asList(purchaseMenuOptions));
@@ -22,85 +22,16 @@ public class VendingMachine {
     private final List<BigDecimal> validAmounts = Arrays.asList(new BigDecimal("1.00"), new BigDecimal("2.00"), new BigDecimal("5.00"),
             new BigDecimal("10.00"), new BigDecimal("20.00"), new BigDecimal("50.00"),
             new BigDecimal("100.00"));
-    private final Map<String, Integer> totalSales = new HashMap<>();
-    private final String SALES_REPORT = "salesreport.txt";
+    private final Map<String, Integer> salesTracker = new HashMap<>();
 
     public VendingMachine() {
         stock();
-        populateTotalSalesFromLog();
+        fillSalesTracker();
     }
 
-    public void initializeSalesFile(File salesFile) {
-        try (FileWriter fw = new FileWriter(salesFile);
-             PrintWriter pw = new PrintWriter(fw)) {
-
-            salesFile.createNewFile();
-
-            for (Slot slot : listOfSlots) {
-                pw.println(slot.getProduct().getName() + "|0");
-            }
-        } catch (IOException e) {
-            System.out.println("Error: could not create that file.");
-        }
-    }
-
-    public void populateTotalSalesFromLog() {
-        File salesFile = new File(SALES_REPORT);
-
-        if (!salesFile.exists()) {
-            initializeSalesFile(salesFile);
-        }
-
-        try (Scanner salesFileStream = new Scanner(salesFile)) {
-            while (salesFileStream.hasNext()) {
-                String line = salesFileStream.nextLine();
-                if (line.contains("|")) {
-                    String[] keyAndVal = salesFileStream.nextLine().split("\\|");
-//                    if (keyAndVal[1].equals("null")) keyAndVal[1] = "0";
-
-                    totalSales.put(keyAndVal[0], Integer.parseInt(keyAndVal[1]));
-                } else if (line.contains("$")) {
-                    String[] totalCumulativeSales = line.split("\\$");
-                    this.totalAllTimeSales = new BigDecimal(totalCumulativeSales[1]);
-                }
-
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("Error: could not find that file.");
-        }
-
-        for (Slot slot : listOfSlots) {
-            String newProductName = slot.getProduct().getName();
-            if (!totalSales.containsKey(newProductName)) {
-                totalSales.put(newProductName, 0);
-            }
-        }
-    }
-
-    public void writeToSalesFile() {
-        String ext = ".txt";
-        String fileBase = "totalsales ";
-        LocalDateTime now = LocalDateTime.now();
-        String fileDateAndTime = now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)) + " " +
-                now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM));
-        fileDateAndTime = fileDateAndTime.replace("/", "-");
-        String todayFile = fileBase + fileDateAndTime + ext;
-
-        try (FileWriter cumulativeSalesFW = new FileWriter(SALES_REPORT);
-             PrintWriter cumulativeSalesPW = new PrintWriter(cumulativeSalesFW);
-             FileWriter todaysReportFW = new FileWriter(todayFile);
-             PrintWriter todaysReportPW = new PrintWriter(todaysReportFW)) {
-
-            for (String item: totalSales.keySet()) {
-                cumulativeSalesPW.println(item + "|" + totalSales.get(item));
-                todaysReportPW.println(item + "|" + totalSales.get(item));
-            }
-
-            cumulativeSalesPW.println("\n**TOTAL SALES**\n  " + nf.format(totalAllTimeSales));
-            todaysReportPW.println("\n**TOTAL SALES**\n  " + nf.format(totalAllTimeSales));
-        } catch (IOException e) {
-            System.out.println(e);
-            System.out.println("Error: Unable to write to that file.");
+    public void fillSalesTracker() {
+        for (Slot slot: listOfSlots) {
+            salesTracker.put(slot.getProduct().getName(), 0);
         }
     }
 
@@ -114,6 +45,10 @@ public class VendingMachine {
 
     public List<String> getPurchaseMenu() {
         return purchaseMenu;
+    }
+
+    public Map<String, Integer> getSalesTracker() {
+        return salesTracker;
     }
 
     // Stock the machine
@@ -149,8 +84,8 @@ public class VendingMachine {
                 Slot newSlotItem = new Slot(slotName, toAdd);
                 listOfSlots.add(newSlotItem);
 
-                if (!totalSales.containsKey(newSlotItem.getProduct().getName())) {
-                    totalSales.put(newSlotItem.getProduct().getName(), 0);
+                if (!salesTracker.containsKey(newSlotItem.getProduct().getName())) {
+                    salesTracker.put(newSlotItem.getProduct().getName(), 0);
                 }
             }
         } catch (FileNotFoundException e) {
@@ -202,13 +137,18 @@ public class VendingMachine {
         String itemSaleMessage = currentProduct.getSaleMessage();
 
         s.sellItem();       //reduces quantity in this slot by 1
-        totalSales.put(itemName, totalSales.get(itemName) + 1);
-        totalAllTimeSales = totalAllTimeSales.add(currentProduct.getPrice());
+        int numCurrentProductSold = salesTracker.get(itemName);
+        salesTracker.put(itemName, numCurrentProductSold + 1);
+        //?
+        totalCurrentSales = totalCurrentSales.add(currentProduct.getPrice());
 
         return itemName + " costs " + nf.format(itemPrice) + ".\nYou have " + nf.format(currentMoney)
                 + " remaining in the machine." + "\n" + itemSaleMessage + "\n\n";
     }
 
+    public BigDecimal getTotalCurrentSales() {
+        return totalCurrentSales;
+    }
 
     public String getChange() {
         BigDecimal initialBalance = getCurrentMoneyInMachine();
