@@ -2,17 +2,17 @@ package com.techelevator;
 
 public class Slot {
 
-    private String slotID;        //A7, B3, etc.
+    private final String SLOT_ID;          //A7, B3, etc.
     private Product product;        //product in this particular slot
-    private int quantity = 5;           //quantity on hand
+    private int quantity = 5;       //quantity on hand always starts at 5 when vending machine is initialized
 
     public Slot(String slotID, Product product) {
-        this.slotID = slotID;
+        this.SLOT_ID = slotID;
         this.product = product;
     }
 
     public String getSlotID() {
-        return slotID;
+        return SLOT_ID;
     }
 
     public Product getProduct() {
@@ -31,17 +31,23 @@ public class Slot {
         this.quantity = quantity;
     }
 
+    //when an item is sold, reduces current quantity in this slot by 1 IF quantity is greater than zero
     public void sellItem() {
-        quantity -= 1;
+        if (this.quantity > 0) {
+            this.quantity -= 1;
+        }
     }
 
+    //prints out relevant info about what is in this particular slot
     @Override
     public String toString() {
 
+        //if the product is sold out, specify that nothing is in this slot
         if (quantity == 0) {
-            return "Slot " + slotID + ": SOLD OUT.";
+            return "Slot " + SLOT_ID + ": SOLD OUT.";
         }
 
-        return "Slot " + slotID + ": " + product.getName() + ", $" + product.getPrice() + ", " + quantity + " in stock";
+        //if the product is not sold out, return the slot ID, product name, product price and quantity in stock
+        return "Slot " + SLOT_ID + ": " + product.getName() + ", $" + product.getPrice() + ", " + quantity + " in stock";
     }
 }

@@ -6,12 +6,11 @@ public class Product {
 
     private String name;
     private BigDecimal price;
-    private String saleMessage;
+    private final String SALE_MESSAGE = ", Yum!";
 
     public Product(String productName, BigDecimal productPrice) {
         this.name = productName;
         this.price = productPrice;
-        this.saleMessage = ", Yum!";
     }
 
     public String getName() {
@@ -27,6 +26,6 @@ public class Product {
     }
 
     public String getSaleMessage() {
-        return this.saleMessage;
+        return this.SALE_MESSAGE;
     }
 }
