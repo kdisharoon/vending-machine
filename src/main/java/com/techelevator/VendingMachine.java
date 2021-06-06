@@ -12,9 +12,9 @@ public class VendingMachine {
     private final String[] PURCHASE_MENU_OPTIONS = {"(1) Feed Money", "(2) Select Product", "(3) Finish Transaction"};
     private BigDecimal currentMoneyInMachine = BigDecimal.ZERO;
     private BigDecimal totalCurrentSales = BigDecimal.ZERO;
-    private final List<Slot> listOfSlots = new ArrayList<>();
     private final List<String> INITIAL_MENU = new ArrayList<>(Arrays.asList(INITIAL_MENU_OPTIONS));
     private final List<String> PURCHASE_MENU = new ArrayList<>(Arrays.asList(PURCHASE_MENU_OPTIONS));
+    private final List<Slot> inventory;
     private final NumberFormat nf = NumberFormat.getCurrencyInstance();
     private final Scanner keyboard = new Scanner(System.in);
     private final List<BigDecimal> VALID_MONEY_AMOUNTS = Arrays.asList(new BigDecimal("1.00"), new BigDecimal("2.00"),
@@ -23,18 +23,18 @@ public class VendingMachine {
     private final Map<String, Integer> salesTracker = new HashMap<>();
 
     public VendingMachine() {
-        stock();
-        fillSalesTracker();
+        inventory = stock("vendingmachine.csv");
+//        fillSalesTracker();
     }
 
-    public void fillSalesTracker() {
-        for (Slot slot: listOfSlots) {
-            salesTracker.put(slot.getProduct().getName(), 0);
-        }
-    }
+//    public void fillSalesTracker() {
+//        for (Slot slot: listOfSlots) {
+//            salesTracker.put(slot.getProduct().getName(), 0);
+//        }
+//    }
 
-    public List<Slot> getListOfSlots() {
-        return listOfSlots;
+    public List<Slot> getInventory() {
+        return inventory;
     }
 
     public List<String> getInitialMenu() {
@@ -49,11 +49,12 @@ public class VendingMachine {
         return salesTracker;
     }
 
-    // Stock the machine
-    public void stock() {
-        String filename = "vendingmachine.csv";
+    // Stock the machine as soon as a VendingMachine object is instantiated
+    public List<Slot> stock(String path) {
 
-        try (Scanner stockFile = new Scanner(new File(filename))) {
+        List<Slot> listOfSlots = new ArrayList<>();
+
+        try (Scanner stockFile = new Scanner(new File(path))) {
 
             while (stockFile.hasNext()) {
                 String line = stockFile.nextLine();
@@ -77,6 +78,7 @@ public class VendingMachine {
                         break;
                     case "drink":
                         toAdd = new Drink(itemName, price);
+                        break;
                 }
 
                 Slot newSlotItem = new Slot(slotName, toAdd);
@@ -89,6 +91,8 @@ public class VendingMachine {
         } catch (FileNotFoundException e) {
             System.out.println("Oh no, we can't find that file.");
         }
+
+        return listOfSlots;
     }
 
     public void addMoney(BigDecimal amountToAdd) {

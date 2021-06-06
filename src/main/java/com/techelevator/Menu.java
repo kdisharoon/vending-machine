@@ -14,7 +14,7 @@ public class Menu {
     private Scanner keyboard = new Scanner(System.in);
     private final List<String> initialMenu = VM.getInitialMenu();
     private final List<String> purchaseMenu = VM.getPurchaseMenu();
-    private final List<Slot> inventory = VM.getListOfSlots();
+    private final List<Slot> inventory = VM.getInventory();
     private final NumberFormat nf = NumberFormat.getCurrencyInstance();
     private final Documenter documenter = new Documenter();
 
