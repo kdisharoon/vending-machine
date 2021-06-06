@@ -8,7 +8,7 @@ import java.text.NumberFormat;
 import java.util.*;
 
 public class VendingMachine {
-    private final String[] INITIAL_MENU_OPTIONS = {"(1) Display Vending Machine Items", "(2) Purchase", "(3) Exit"};
+    private final String[] INITIAL_MENU_OPTIONS = {"(1) Display Vending Machine Items", "(2) Purchase", "(3) Exit", ""};
     private final String[] PURCHASE_MENU_OPTIONS = {"(1) Feed Money", "(2) Select Product", "(3) Finish Transaction"};
     private BigDecimal currentMoneyInMachine = BigDecimal.ZERO;
     private BigDecimal totalCurrentSales = BigDecimal.ZERO;

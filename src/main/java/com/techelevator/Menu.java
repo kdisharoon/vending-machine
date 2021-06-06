@@ -28,19 +28,26 @@ public class Menu {
         if (relevantMenu == null) return null;
 
         String userChoice;
+        boolean invalidChoice = false;
 
-        userChoice = keyboard.nextLine();
-
-        while (! (userChoice.equals("1") || userChoice.equals("2")
-                || userChoice.equals("3") || userChoice.equals("4")) ) {
-            System.out.println("That's not valid input, try again.");
+        do {
+            if (invalidChoice) {
+                System.out.println("That's not valid input, try again.");
+            }
             printMenu(relevantMenu);
             userChoice = keyboard.nextLine();
+            invalidChoice = true;
         }
+        while ( (!userChoice.matches("[\\d+]")) || Integer.parseInt(userChoice) <= 0 || Integer.parseInt(userChoice) > relevantMenu.size() );
 
         return userChoice;
     }
 
+    /**
+     *
+     * @param listToPrint
+     * @param <T>
+     */
     public <T> void printMenu(List<T> listToPrint) {
         for (T t : listToPrint) {
             System.out.println(t);
