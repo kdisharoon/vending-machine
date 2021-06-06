@@ -24,14 +24,7 @@ public class VendingMachine {
 
     public VendingMachine() {
         inventory = stock("vendingmachine.csv");
-//        fillSalesTracker();
     }
-
-//    public void fillSalesTracker() {
-//        for (Slot slot: listOfSlots) {
-//            salesTracker.put(slot.getProduct().getName(), 0);
-//        }
-//    }
 
     public List<Slot> getInventory() {
         return inventory;
@@ -111,8 +104,7 @@ public class VendingMachine {
 
         try {
             amount = keyboard.nextBigDecimal();
-        }
-        catch (InputMismatchException e) {
+        } catch (InputMismatchException e) {
             amount = BigDecimal.ZERO;
         }
 
@@ -184,7 +176,4 @@ public class VendingMachine {
         return currentMoneyInMachine;
     }
 
-    public static void main(String[] args) {
-
-    }
 }

@@ -17,13 +17,16 @@ public class VendingMachineTest {
         objectUnderTest = new VendingMachine();
     }
 
+    //The below test fails because it's comparing two different objects. Overriding the equals method did not fix it.
+    //Still need to figure out how to correctly compare them
     @Test
     public void valid_input_file_produces_inventory_list() {
         //Arrange
         List<Slot> expected = new ArrayList<>();
         String[] testSlotNames = new String[] {"A1", "B2", "C3", "D4"};
         String[] testProductNames = new String[] {"Moldy Cheese", "Brackish Water", "Rubber Pieces", "Dirt Balls"};
-        BigDecimal[] testPrices = new BigDecimal[] {new BigDecimal("3.05"), new BigDecimal("1.45"), new BigDecimal("2.75"), new BigDecimal("8.30")};
+        BigDecimal[] testPrices = new BigDecimal[] {new BigDecimal("3.05"), new BigDecimal("1.45"),
+                                  new BigDecimal("2.75"), new BigDecimal("8.30")};
 
         Product testProduct0 = new Chip(testProductNames[0], testPrices[0]);
         Slot testListItem0 = new Slot(testSlotNames[0], testProduct0);
@@ -47,6 +50,9 @@ public class VendingMachineTest {
         //Assert
         Assert.assertEquals("The lists are not equal", expected, output);
     }
+
+//    @Test
+
 
 
 }
