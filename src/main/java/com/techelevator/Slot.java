@@ -27,8 +27,10 @@ public class Slot {
         this.product = product;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setQuantity(int newQuantity) {
+        if (newQuantity >= 0) {
+            this.quantity = newQuantity;
+        }
     }
 
     //when an item is sold, reduces current quantity in this slot by 1 IF quantity is greater than zero
