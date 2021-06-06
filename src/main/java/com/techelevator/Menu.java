@@ -23,7 +23,8 @@ public class Menu {
 
         userChoice = keyboard.nextLine();
 
-        while (! (userChoice.equals("1") || userChoice.equals("2") || userChoice.equals("3")) ) {
+        while (! (userChoice.equals("1") || userChoice.equals("2")
+                || userChoice.equals("3") || userChoice.equals("4")) ) {
             System.out.println("That's not valid input, try again.");
             printMenu(relevantMenu);
             userChoice = keyboard.nextLine();
@@ -129,15 +130,12 @@ public class Menu {
                 System.out.println("Generating Sales Report...");
                 documenter.generateSalesReport(VM.getSalesTracker(), VM.getTotalCurrentSales());
             }
-
         } while (!userChoice.equals("3"));
-
     }
 
     public static void main(String[] args) {
 
         Menu vendingMachineMenu = new Menu();
         vendingMachineMenu.run();
-
     }
 }
