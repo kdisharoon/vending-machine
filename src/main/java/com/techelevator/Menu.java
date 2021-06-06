@@ -44,15 +44,19 @@ public class Menu {
     }
 
     /**
+     *  Takes any List of type T and prints its elements.
      *
      * @param listToPrint
      * @param <T>
      */
     public <T> void printMenu(List<T> listToPrint) {
-        for (T t : listToPrint) {
-            System.out.println(t);
+        if (listToPrint != null) {
+            for (T t : listToPrint) {
+                if (t instanceof String && t == "") continue;
+                System.out.println(t);
+            }
+            System.out.println();
         }
-        System.out.println();
     }
 
     public String selectProduct() {
