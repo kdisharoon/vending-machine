@@ -14,6 +14,7 @@ public class VendingMachine {
     private final String[] initialMenuOptions = {OPTION1, OPTION2, OPTION3};
     private final String[] purchaseMenuOptions = {"(1) Feed Money", "(2) Select Product", "(3) Finish Transaction"};
     private BigDecimal currentMoneyInMachine = BigDecimal.ZERO;
+    private BigDecimal totalCurrentSales = BigDecimal.ZERO;
     private final List<Slot> listOfSlots = new ArrayList<>();
     private final List<String> INITIAL_MENU = new ArrayList<>(Arrays.asList(initialMenuOptions));
     private final List<String> purchaseMenu = new ArrayList<>(Arrays.asList(purchaseMenuOptions));
@@ -22,10 +23,17 @@ public class VendingMachine {
     private final List<BigDecimal> validAmounts = Arrays.asList(new BigDecimal("1.00"), new BigDecimal("2.00"), new BigDecimal("5.00"),
             new BigDecimal("10.00"), new BigDecimal("20.00"), new BigDecimal("50.00"),
             new BigDecimal("100.00"));
-
+    private final Map<String, Integer> salesTracker = new HashMap<>();
 
     public VendingMachine() {
         stock();
+        fillSalesTracker();
+    }
+
+    public void fillSalesTracker() {
+        for (Slot slot: listOfSlots) {
+            salesTracker.put(slot.getProduct().getName(), 0);
+        }
     }
 
     public List<Slot> getListOfSlots() {
@@ -38,6 +46,10 @@ public class VendingMachine {
 
     public List<String> getPurchaseMenu() {
         return purchaseMenu;
+    }
+
+    public Map<String, Integer> getSalesTracker() {
+        return salesTracker;
     }
 
     // Stock the machine
@@ -70,7 +82,12 @@ public class VendingMachine {
                         toAdd = new Drink(itemName, price);
                 }
 
-                listOfSlots.add(new Slot(slotName, toAdd));
+                Slot newSlotItem = new Slot(slotName, toAdd);
+                listOfSlots.add(newSlotItem);
+
+                if (!salesTracker.containsKey(newSlotItem.getProduct().getName())) {
+                    salesTracker.put(newSlotItem.getProduct().getName(), 0);
+                }
             }
         } catch (FileNotFoundException e) {
             System.out.println("Oh no, we can't find that file.");
@@ -121,11 +138,18 @@ public class VendingMachine {
         String itemSaleMessage = currentProduct.getSaleMessage();
 
         s.sellItem();       //reduces quantity in this slot by 1
+        int numCurrentProductSold = salesTracker.get(itemName);
+        salesTracker.put(itemName, numCurrentProductSold + 1);
+        //?
+        totalCurrentSales = totalCurrentSales.add(currentProduct.getPrice());
 
         return itemName + " costs " + nf.format(itemPrice) + ".\nYou have " + nf.format(currentMoney)
                 + " remaining in the machine." + "\n" + itemSaleMessage + "\n\n";
     }
 
+    public BigDecimal getTotalCurrentSales() {
+        return totalCurrentSales;
+    }
 
     public String getChange() {
         BigDecimal initialBalance = getCurrentMoneyInMachine();

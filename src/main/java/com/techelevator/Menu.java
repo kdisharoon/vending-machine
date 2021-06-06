@@ -16,6 +16,7 @@ public class Menu {
     private final List<String> purchaseMenu = VM.getPurchaseMenu();
     private final List<Slot> inventory = VM.getListOfSlots();
     private final NumberFormat nf = NumberFormat.getCurrencyInstance();
+    private final Documenter documenter = new Documenter();
 
     public <T> String getUserChoice(List<T> relevantMenu) {
         String userChoice;
@@ -86,46 +87,28 @@ public class Menu {
     public void processPurchaseChoice() {
 
         String purchaseChoice;
-        String logFileName = "Log.txt";
 
-        try (FileWriter fw = new FileWriter(logFileName, true);
-             PrintWriter auditLogWriter = new PrintWriter(fw, true)) {
+        do {
+            System.out.println("\nWhat would you like to do?");
+            printMenu(purchaseMenu);
+            System.out.println("Current Money Provided: " + nf.format(VM.getCurrentMoneyInMachine()));
+            purchaseChoice = getUserChoice(purchaseMenu);
+            String logMessage;
 
-            do {
-                System.out.println("\nWhat would you like to do?");
-                printMenu(purchaseMenu);
-                System.out.println("Current Money Provided: " + nf.format(VM.getCurrentMoneyInMachine()));
-                purchaseChoice = getUserChoice(purchaseMenu);
-                String msgForLog;
+            if (purchaseChoice.equals("1")) {
+                logMessage = VM.feedMoney();
+            } else if (purchaseChoice.equals("2")) {
+                logMessage = selectProduct();
+            } else if (purchaseChoice.equals("3")) {
+                logMessage = VM.getChange();
+            } else {
+                System.out.println("Invalid choice.");
+                continue;
+            }
 
-                if (purchaseChoice.equals("1")) {
-                    msgForLog = VM.feedMoney();
-                } else if (purchaseChoice.equals("2")) {
-                    msgForLog = selectProduct();
-                } else {
-                    msgForLog = VM.getChange();
-                }
+            documenter.writeLog(logMessage);
 
-                String currentDateTime = getCurrentDateAndTime();
-
-                if (msgForLog != null) {
-                    msgForLog = currentDateTime + " " + msgForLog;
-                    auditLogWriter.println(msgForLog);
-                }
-            } while ((purchaseChoice.equals("1")) || (purchaseChoice.equals("2")));
-
-        } catch (IOException e) {
-            System.out.println("Unable to find or create " + logFileName + ".");
-        }
-
-    }
-
-    public String getCurrentDateAndTime() {
-        LocalDateTime now = LocalDateTime.now();
-
-        return now.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)) + " " +
-                now.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM));
-
+        } while ((purchaseChoice.equals("1")) || (purchaseChoice.equals("2")));
     }
 
     public void run() {
@@ -142,6 +125,9 @@ public class Menu {
                 printMenu(inventory);
             } else if (userChoice.equals("2")) {
                 processPurchaseChoice();
+            } else if (userChoice.equals("4")) {
+                System.out.println("Generating Sales Report...");
+                documenter.generateSalesReport(VM.getSalesTracker(), VM.getTotalCurrentSales());
             }
 
         } while (!userChoice.equals("3"));
