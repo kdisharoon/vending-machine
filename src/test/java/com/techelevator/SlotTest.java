@@ -20,9 +20,8 @@ public class SlotTest {
     @Test
     public void sellitem_reduces_quantity_by_1_when_quantity_is_positive() {
 
-        //Arrange - first 2 lines set the initial quantity in the test object and get that quantity
+        //Arrange - first line sets the initial quantity in the test object and gets that quantity
         objectUnderTest.setQuantity(45);
-        int inputQuantity = objectUnderTest.getQuantity();
 
         //Act - next 2 lines run the sellItem method and get the new quantity
         objectUnderTest.sellItem();
@@ -36,9 +35,8 @@ public class SlotTest {
     @Test
     public void sellitem_does_not_reduce_quantity_when_quantity_is_zero() {
 
-        //Arrange - first 2 lines set the initial quantity in the test object and get that quantity
+        //Arrange - first line sets the initial quantity in the test object and gets that quantity
         objectUnderTest.setQuantity(0);
-        int inputQuantity = objectUnderTest.getQuantity();
 
         //Act - next 2 lines run the sellItem method and get the new quantity, which should still be zero
         objectUnderTest.sellItem();
