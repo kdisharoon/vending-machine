@@ -18,6 +18,12 @@ public class Menu {
     private final NumberFormat nf = NumberFormat.getCurrencyInstance();
     private final Documenter documenter = new Documenter();
 
+    /**
+     *
+     * @param relevantMenu A generic list to represent a series of options to the user.
+     * @param <T> The type of the List stored in relevantMenu.
+     * @return A string corresponding to the numerical choice (between 1 and 4) entered by the user.git com
+     */
     public <T> String getUserChoice(List<T> relevantMenu) {
         String userChoice;
 
