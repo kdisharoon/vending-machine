@@ -155,7 +155,7 @@ public class Menu {
                 //below is the "secret" input to generate a sales report and flush the current session's sales tracker
                 } else if (userChoice.equals("4")) {
                     System.out.println("Generating Sales Report...");
-                    documenter.generateSalesReport(VM.getAndFlushSalesTracker(true), VM.getTotalCurrentSales());
+                    documenter.generateSalesReport(VM.getAndFlushSalesTracker(true), VM.getAndFlushTotalCurrentSales(true));
                 }
             }
         //we'll continue with this main menu screen until the user selects 3 to quit the program

@@ -172,8 +172,10 @@ public class VendingMachine {
                 + " remaining in the machine." + "\n" + itemSaleMessage + "\n\n";
     }
 
-    protected BigDecimal getTotalCurrentSales() {
-        return totalCurrentSales;
+    protected BigDecimal getAndFlushTotalCurrentSales(boolean flush) {
+        BigDecimal salesToReturn = totalCurrentSales;
+        totalCurrentSales = BigDecimal.ZERO;
+        return salesToReturn;
     }
 
     //getChange method calculates how many quarters, dimes, nickels are required to give change with the fewest coins

@@ -19,7 +19,7 @@ public class Documenter {
      *
      * @param logMessage - Message to write to Log.txt. Provided by Menu.java.
      */
-    public void writeLog(String logMessage) {
+    protected void writeLog(String logMessage) {
         String logFileName = "Log.txt";
 
         try (FileWriter fw = new FileWriter(logFileName, true);
@@ -43,7 +43,7 @@ public class Documenter {
      * @param currentSales A map with item names as keys and number sold since instantiation.
      * @param totalCurrentSales Total amount of sales since instantiation.
      */
-    public void generateSalesReport(Map<String, Integer> currentSales, BigDecimal totalCurrentSales) {
+    protected void generateSalesReport(Map<String, Integer> currentSales, BigDecimal totalCurrentSales) {
         Map<String, Integer> cumulativeSales = getCumulativeSales();
 
         if (cumulativeSales != null) {
