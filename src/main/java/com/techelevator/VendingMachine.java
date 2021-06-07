@@ -39,7 +39,7 @@ public class VendingMachine {
     }
 
     //method to track all-time sales on the machine - will flush the input after writing to the log file
-    public Map<String, Integer> getAndFlushSalesTracker(boolean flush) {
+    protected Map<String, Integer> getAndFlushSalesTracker(boolean flush) {
         Map<String, Integer> salesTallyToReturn = new HashMap<>();
 
         //iterates through the list of products sold during this session and adds to the list to return
@@ -58,7 +58,7 @@ public class VendingMachine {
     }
 
     // Stock the machine as soon as a VendingMachine object is instantiated
-    public List<Slot> stock(String path) {
+    protected List<Slot> stock(String path) {
 
         List<Slot> listOfSlots = new ArrayList<>();
 
@@ -107,17 +107,18 @@ public class VendingMachine {
         return listOfSlots;
     }
 
-    public BigDecimal addMoney(BigDecimal amountToAdd) {
+
+    protected BigDecimal addMoney(BigDecimal amountToAdd) {
         currentMoneyInMachine = currentMoneyInMachine.add(amountToAdd);
         return currentMoneyInMachine;
     }
 
-    public BigDecimal subtractMoney(BigDecimal amountToSubtract) {
+    protected BigDecimal subtractMoney(BigDecimal amountToSubtract) {
         currentMoneyInMachine = currentMoneyInMachine.subtract(amountToSubtract);
         return currentMoneyInMachine;
     }
 
-    public String feedMoney() {
+    protected String feedMoney() {
         BigDecimal amount;
         String message = "FEED MONEY:";
 
@@ -147,7 +148,7 @@ public class VendingMachine {
 
     }
 
-    public String dispense(Slot s) {
+    protected String dispense(Slot s) {
         Product currentProduct = s.getProduct();
         String itemName = currentProduct.getName();
         BigDecimal itemPrice = currentProduct.getPrice();
@@ -171,12 +172,12 @@ public class VendingMachine {
                 + " remaining in the machine." + "\n" + itemSaleMessage + "\n\n";
     }
 
-    public BigDecimal getTotalCurrentSales() {
+    protected BigDecimal getTotalCurrentSales() {
         return totalCurrentSales;
     }
 
     //getChange method calculates how many quarters, dimes, nickels are required to give change with the fewest coins
-    public String getChange() {
+    protected String getChange() {
         BigDecimal initialBalance = getCurrentMoneyInMachine();
 
         if (initialBalance.equals(BigDecimal.ZERO)) return null;
@@ -204,7 +205,7 @@ public class VendingMachine {
         return message + " " + nf.format(initialBalance) + " " + nf.format(getCurrentMoneyInMachine());
     }
 
-    public BigDecimal getCurrentMoneyInMachine() {
+    protected BigDecimal getCurrentMoneyInMachine() {
         return currentMoneyInMachine;
     }
 

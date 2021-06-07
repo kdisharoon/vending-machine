@@ -20,7 +20,7 @@ public class Menu {
      * @param <T> The type of the List stored in relevantMenu.
      * @return A string corresponding to the numerical choice (between 1 and 4) entered by the user.git com
      */
-    public <T> String getUserChoice(List<T> relevantMenu) {
+    protected  <T> String getUserChoice(List<T> relevantMenu) {
         if (relevantMenu == null) return null;
 
         String userChoice;
@@ -46,7 +46,7 @@ public class Menu {
      * @param listToPrint
      * @param <T>
      */
-    public <T> void printMenu(List<T> listToPrint) {
+    protected  <T> void printMenu(List<T> listToPrint) {
         if (listToPrint != null) {
             for (T t : listToPrint) {
                 if (t instanceof String && t == "") continue;
@@ -56,7 +56,7 @@ public class Menu {
         }
     }
 
-    public String selectProduct() {
+    protected String selectProduct() {
         System.out.println("Here are the currently available products: \n");
         printMenu(inventory);
         System.out.println("Please enter the slot of the product you'd like to purchase (i.e. A2, B4): ");
@@ -105,7 +105,7 @@ public class Menu {
     }
 
     //method to deal with what the user inputs on the Purchase Choice screen, including checking for invalid inputs
-    public void processPurchaseChoice() {
+    protected void processPurchaseChoice() {
 
         String purchaseChoice;
 
