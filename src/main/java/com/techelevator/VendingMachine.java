@@ -38,13 +38,16 @@ public class VendingMachine {
         return PURCHASE_MENU;
     }
 
+    //method to track all-time sales on the machine - will flush the input after writing to the log file
     public Map<String, Integer> getAndFlushSalesTracker(boolean flush) {
         Map<String, Integer> salesTallyToReturn = new HashMap<>();
 
+        //iterates through the list of products sold during this session and adds to the list to return
         for (Map.Entry<String, Integer> entry: salesTracker.entrySet()) {
             salesTallyToReturn.put(entry.getKey(), entry.getValue());
         }
 
+        //if we should flush the sales tracker, do so
         if (flush) {
             for (Map.Entry<String, Integer> entry : salesTracker.entrySet()) {
                 salesTracker.put(entry.getKey(), 0);
@@ -61,6 +64,7 @@ public class VendingMachine {
 
         try (Scanner stockFile = new Scanner(new File(path))) {
 
+            //reads through every line in the vendingmachine.csv file and parses it into an array
             while (stockFile.hasNext()) {
                 String line = stockFile.nextLine();
                 String[] lineElements = line.split("\\|");
@@ -87,8 +91,11 @@ public class VendingMachine {
                 }
 
                 Slot newSlotItem = new Slot(slotName, toAdd);
+
+                //after parsing, adds the slot item (slotID, product name and price) to the list of current machine contents)
                 listOfSlots.add(newSlotItem);
 
+                //if the sales tracker doesn't already have this item in it, put it in and set initial quantity sold to 0
                 if (!salesTracker.containsKey(newSlotItem.getProduct().getName())) {
                     salesTracker.put(newSlotItem.getProduct().getName(), 0);
                 }
@@ -100,12 +107,14 @@ public class VendingMachine {
         return listOfSlots;
     }
 
-    public void addMoney(BigDecimal amountToAdd) {
+    public BigDecimal addMoney(BigDecimal amountToAdd) {
         currentMoneyInMachine = currentMoneyInMachine.add(amountToAdd);
+        return currentMoneyInMachine;
     }
 
-    public void subtractMoney(BigDecimal amountToSubtract) {
+    public BigDecimal subtractMoney(BigDecimal amountToSubtract) {
         currentMoneyInMachine = currentMoneyInMachine.subtract(amountToSubtract);
+        return currentMoneyInMachine;
     }
 
     public String feedMoney() {
@@ -116,13 +125,17 @@ public class VendingMachine {
 
         try {
             amount = keyboard.nextBigDecimal();
-        } catch (InputMismatchException e) {
+        }
+        //catches inputs that aren't numerical
+        catch (InputMismatchException e) {
             amount = BigDecimal.ZERO;
         }
 
         keyboard.nextLine();
+        //rounds the amount down so that 5.00000000000000001 will be accepted as 5.00. This was causing exceptions
         BigDecimal roundedAmount = amount.setScale(2, RoundingMode.FLOOR);
 
+        //VALID_MONEY_AMOUNTS verifies that nonexistent currency like a $3 bill won't be accepted
         if (VALID_MONEY_AMOUNTS.contains(roundedAmount)) {
             addMoney(roundedAmount);
             System.out.println(nf.format(roundedAmount) + " added to your balance.\n\n");
@@ -138,14 +151,20 @@ public class VendingMachine {
         Product currentProduct = s.getProduct();
         String itemName = currentProduct.getName();
         BigDecimal itemPrice = currentProduct.getPrice();
+
+        //make sure to subtract money from current balance before actually dispensing product
         subtractMoney(itemPrice);
         BigDecimal currentMoney = getCurrentMoneyInMachine();
         String itemSaleMessage = currentProduct.getSaleMessage();
 
-        s.sellItem();       //reduces quantity in this slot by 1
+        //reduces quantity in this slot by 1
+        s.sellItem();
+
+        //next two lines increment the current session sales tracker by 1 for the product we just sold
         int numCurrentProductSold = salesTracker.get(itemName);
         salesTracker.put(itemName, numCurrentProductSold + 1);
-        //?
+
+        //adds the amount just spent to the machine's total sales
         totalCurrentSales = totalCurrentSales.add(currentProduct.getPrice());
 
         return itemName + " costs " + nf.format(itemPrice) + ".\nYou have " + nf.format(currentMoney)
@@ -156,6 +175,7 @@ public class VendingMachine {
         return totalCurrentSales;
     }
 
+    //getChange method calculates how many quarters, dimes, nickels are required to give change with the fewest coins
     public String getChange() {
         BigDecimal initialBalance = getCurrentMoneyInMachine();
 

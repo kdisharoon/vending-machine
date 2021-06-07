@@ -1,7 +1,5 @@
 package com.techelevator;
 
-import java.util.Objects;
-
 public class Slot {
 
     private final String SLOT_ID;          //A7, B3, etc.

@@ -51,8 +51,29 @@ public class VendingMachineTest {
         Assert.assertEquals("The lists are not equal", expected, output);
     }
 
-//    @Test
+    @Test
+    public void addmoney_works_for_positive_value() {
+        //Arrange
+        BigDecimal testMoneyToAdd = new BigDecimal("1.00");
 
+        //Act
+        BigDecimal output = objectUnderTest.addMoney(testMoneyToAdd);
 
+        //Assert
+        Assert.assertEquals("Money in machine should be $1.00", new BigDecimal("1.00"), output);
+    }
+
+    @Test
+    public void subtractmoney_works_for_positive_value() {
+        //Arrange
+        BigDecimal testMoneyToSubtract = new BigDecimal("5.00");
+        objectUnderTest.addMoney(new BigDecimal("20.00"));
+
+        //Act
+        BigDecimal output = objectUnderTest.subtractMoney(testMoneyToSubtract);
+
+        //Assert
+        Assert.assertEquals("Money in machine should be $15.00", new BigDecimal("15.00"), output);
+    }
 
 }

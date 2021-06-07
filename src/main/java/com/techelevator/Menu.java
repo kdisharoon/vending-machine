@@ -1,11 +1,7 @@
 package com.techelevator;
 
-import java.io.*;                                    //can be removed
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.time.LocalDateTime;                     //can be removed
-import java.time.format.DateTimeFormatter;          //can be removed
-import java.time.format.FormatStyle;                //can be removed
 import java.util.List;
 import java.util.Scanner;
 
@@ -38,6 +34,7 @@ public class Menu {
             userChoice = keyboard.nextLine();
             invalidChoice = true;
         }
+        //regex ensures the input is an integer. next two OR checks make sure the choice is between 1 and the size of the menu
         while ( (!userChoice.matches("[\\d+]")) || Integer.parseInt(userChoice) <= 0 || Integer.parseInt(userChoice) > relevantMenu.size() );
 
         return userChoice;
@@ -67,15 +64,21 @@ public class Menu {
         String productLogMessage = null;
 
         boolean found = false;
+
+        //iterates through all the slots in the machine until we find the one the user selected
         for (Slot s : inventory) {
+
             if (s.getSlotID().equals(userInput)) {
                 BigDecimal price = s.getProduct().getPrice();
                 BigDecimal currentMoney = VM.getCurrentMoneyInMachine();
                 found = true;
 
+                //if the item the user wants isn't sold out, and they have enough money to purchase it
                 if (s.getQuantity() > 0) {
                     if (price.compareTo(currentMoney) <= 0) {
                         BigDecimal balanceBeforePurchase = VM.getCurrentMoneyInMachine();
+
+                        //actually dispenses the product in slot s
                         String dispenseMsg = VM.dispense(s);
 
                         System.out.println(dispenseMsg);
@@ -101,9 +104,7 @@ public class Menu {
         return productLogMessage;
     }
 
-    /**
-     *
-     */
+    //method to deal with what the user inputs on the Purchase Choice screen, including checking for invalid inputs
     public void processPurchaseChoice() {
 
         String purchaseChoice;
@@ -132,6 +133,7 @@ public class Menu {
         } while ((purchaseChoice.equals("1")) || (purchaseChoice.equals("2")));
     }
 
+    //this serves as the main starting point for the program to get the user's input
     public void run() {
         String userChoice;
 
@@ -139,6 +141,9 @@ public class Menu {
 
         do {
             System.out.println("\nWhat would you like to do?");
+
+            //the initial menu printed out below has 4 values - the fourth one is an empty string to represent the
+            //"secret" input of 4 to generate a sales report
             printMenu(initialMenu);
             userChoice = getUserChoice(VM.getInitialMenu());
 
@@ -147,11 +152,13 @@ public class Menu {
                     printMenu(inventory);
                 } else if (userChoice.equals("2")) {
                     processPurchaseChoice();
+                //below is the "secret" input to generate a sales report and flush the current session's sales tracker
                 } else if (userChoice.equals("4")) {
                     System.out.println("Generating Sales Report...");
                     documenter.generateSalesReport(VM.getAndFlushSalesTracker(true), VM.getTotalCurrentSales());
                 }
             }
+        //we'll continue with this main menu screen until the user selects 3 to quit the program
         } while (!userChoice.equals("3"));
     }
 
