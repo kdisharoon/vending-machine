@@ -38,7 +38,7 @@ public class Documenter {
 
     /**
      * Method publicly available to accept Map of current sales and total amount of current sales
-     * as a BigDecimal.
+     * as a BigDecimal. Calls various helper methods, ultimately writing to a file.
      *
      * @param currentSales A map with item names as keys and number sold since instantiation.
      * @param totalCurrentSales Total amount of sales since instantiation.
@@ -62,8 +62,12 @@ public class Documenter {
     }
 
     /**
-     * Looks for the most recent file with prefix "totalsales"
-     * @return
+     * Calls method to get most recently updated sales report file. If found, iterates
+     * through that file and populates Map<String, Integer> cumulativeSales with
+     * product names and number of items sold. If not found, returns null.
+     *
+     * @return Map<String, Integer> cumulativeSales - A Map that contains product names
+     * and sales numbers, or null if call to getMostRecentSalesFile() returns null.
      */
     private Map<String, Integer> getCumulativeSales() {
         File salesFile = getMostRecentSalesFile();
@@ -93,6 +97,12 @@ public class Documenter {
         return null;
     }
 
+    /**
+     * Helper method to get the most recently edited file that starts with "salesreport"
+     * in current directory.
+     *
+     * @return File object representing the most recent salesreport file, or null if not found.
+     */
     private File getMostRecentSalesFile() {
         File currentDirectory = new File(".");
         File[] files = currentDirectory.listFiles();
@@ -115,6 +125,13 @@ public class Documenter {
         return mostRecent;
     }
 
+    /**
+     * Takes a Map of sales and writes them to a file in pipe delimited fashion.
+     * File's title pattern is prefix of "salesreport" with suffix indicating
+     * date and time that file was generated.
+     *
+     * @param salesToWrite Map of product names and sales
+     */
     private void writeToSalesFile(Map<String, Integer> salesToWrite) {
         String fileBase = "totalsales ";
         String ext = ".txt";
@@ -135,7 +152,10 @@ public class Documenter {
         }
     }
 
-
+    /**
+     *
+     * @return String representing current date and time, formatted.
+     */
     private String getCurrentDateAndTime() {
         LocalDateTime now = LocalDateTime.now();
 
