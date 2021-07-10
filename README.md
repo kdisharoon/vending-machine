@@ -1,3 +1,7 @@
+This is the Vendo-Matic 800 vending machine software, completed as a team for capstone #1 in Tech Elevator. It's command-line based and incorporates fundamentals of OOP, file I/O and logging.
+
+
+
 ## Module 1 Capstone - Vending Machine Software
 
 You've been asked to develop an application for the newest vending machine distributor,
